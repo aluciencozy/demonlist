@@ -1,4 +1,5 @@
 from enum import Enum
+
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, UniqueConstraint, Enum as SQLEnum
 
@@ -20,6 +21,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(nullable=False, index=True, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password_hash: Mapped[str] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     
     completions: Mapped[list['Completion']] = relationship(back_populates='user')
     
