@@ -1,6 +1,12 @@
-from datetime import datetime
+from enum import Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint, Enum as SQLEnum
+
+
+class Status(Enum):
+    PENDING = 'pending'
+    APPROVED = 'approved'
+    REJECTED = 'rejected'
 
 
 class Base(DeclarativeBase):
@@ -40,11 +46,12 @@ class Completion(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     demon_id: Mapped[int] = mapped_column(ForeignKey('demons.id'), nullable=False)
-    status: Mapped[str] = mapped_column(nullable=False, default='pending')
     proof_link: Mapped[str | None] # Store in AWS S3 later
+    status: Mapped[Status] = mapped_column(
+        SQLEnum(Status, name="completion status"),
+        default=Status.PENDING,
+        nullable=False
+    )
     
     user: Mapped['User'] = relationship(back_populates='completions')
     demon: Mapped['Demon'] = relationship(back_populates='completions')
-    
-
-# Question about list rankings updating
