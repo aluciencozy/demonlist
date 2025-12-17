@@ -9,12 +9,10 @@ from app.core.config import settings
 from app.models.api_models import TokenData
 from app.models.db_models import User
 from app.db.db import SessionDep
+from app.services.auth_service import get_user_by_id
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-def get_user(db: SessionDep, user_id: int) -> User | None:
-    return db.query(User).filter(User.id == user_id).first()
-
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: SessionDep) -> User:
     credentials_exception = HTTPException(
@@ -30,7 +28,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
         token_data = TokenData(user_id=user_id)
     except (InvalidTokenError, ValueError, TypeError):
         raise credentials_exception
-    user = get_user(db=session, user_id=token_data.user_id)
+    user = get_user_by_id(db=session, user_id=token_data.user_id)
     if user is None:
         raise credentials_exception
     return user

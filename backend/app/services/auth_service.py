@@ -4,12 +4,28 @@ import jwt
 from pwdlib import PasswordHash
 
 from app.core.config import settings
+from app.models.db_models import User
+from app.db.db import SessionDep
 
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 password_hash = PasswordHash.recommended()
+
+
+def get_user_by_id(db: SessionDep, user_id: int) -> User | None:
+    return db.query(User).filter(User.id == user_id).first()
+
+
+def get_user_by_email(db: SessionDep, email: str) -> User | None:
+    return db.query(User).filter(User.email == email).first()
+
+
+def authenticate_user(db: SessionDep, email: str, password: str) -> User | None:
+    user = get_user_by_email(db, email)
+    if not user or not verify_password(password, user.hashed_password):
+        return None
+    return user
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
