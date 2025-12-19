@@ -22,10 +22,12 @@ class DemonlistResponse(BaseModel):
     id: int
     name: str
     creator: str
+    verifier: str
     ranking: int
-    youtube_link: str | None
-    description: str | None
-
+    level_id: int
+    preview_link: str | None
+    thumbnail: str | None
+    
 
 class CompletionCreate(BaseModel):
     demon_id: int
@@ -35,6 +37,10 @@ class CompletionCreate(BaseModel):
 class CompletionResponse(BaseModel):
     demon_id: int
     status: str
+    
+    
+class CompletionUpdate(BaseModel):
+    proof_link: str
 
 
 class LeaderboardEntry(BaseModel):

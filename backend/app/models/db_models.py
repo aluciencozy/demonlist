@@ -32,9 +32,11 @@ class Demon(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(nullable=False, index=True)
     creator: Mapped[str] = mapped_column(nullable=False)
+    verifier: Mapped[str] = mapped_column(nullable=False)
     ranking: Mapped[int] = mapped_column(nullable=False, unique=True)
-    description: Mapped[str | None]
+    level_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     preview_link: Mapped[str | None]
+    thumbnail: Mapped[str | None]
     
     completions: Mapped[list['Completion']] = relationship(back_populates='demon')
     
@@ -42,7 +44,7 @@ class Demon(Base):
 class Completion(Base):
     __tablename__ = 'completions'
     __table_args__ = (
-        UniqueConstraint('user_id', 'demon_id', name='uq_user_demon')
+        UniqueConstraint('user_id', 'demon_id', name='uq_user_demon'),
     )
     
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

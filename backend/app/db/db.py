@@ -4,10 +4,12 @@ from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
+from app.models.db_models import Base
 
-DATABASE_URL = "sqlite:///./test.db"
+engine = create_engine(settings.DATABASE_URL)
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+Base.metadata.create_all(bind=engine)
 
 
 def get_session():
