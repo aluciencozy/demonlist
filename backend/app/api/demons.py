@@ -12,3 +12,8 @@ router = APIRouter(prefix="/demonlist", tags=["demonlist"], responses={404: {"de
 @router.get("/", response_model=list[DemonlistResponse])
 def get_demonlist(db: SessionDep):
     return db.query(Demon).all()
+
+
+@router.get("/{demon_id}", response_model=DemonlistResponse)
+def get_demon(demon_id: int, db: SessionDep):
+    return db.query(Demon).filter(Demon.id == demon_id).first()

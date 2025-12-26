@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from app.dependencies.auth import SessionDep
 from app.models.db_models import User, Completion, Status
-from app.models.api_models import CompletionResponse, CompletionCreate, CompletionUpdate
+from app.models.api_models import CompletionResponse, CompletionCreate, CompletionUpdate, CompletionStatusUpdate
 from app.dependencies.auth import get_current_active_user
 
 
@@ -13,10 +13,12 @@ router = APIRouter(prefix="/completions", responses={401: {"description": "Not a
 
 
 @router.get("/", response_model=list[CompletionResponse])
-def get_all_completions(
-    current_user: Annotated[User, Depends(get_current_active_user)]
+def get_my_completions(
+    db: SessionDep, current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    return current_user.completions
+    return (
+        db.query(Completion).filter(Completion.user_id == current_user.id).all()
+    )
 
 
 @router.get("/{demon_id}", response_model=CompletionResponse)
@@ -28,6 +30,7 @@ def get_completion(
     
     if completion:
         return completion
+    
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completion not found.")
 
 
@@ -48,7 +51,7 @@ def submit_completion(
     return new_completion
 
 
-@router.put("/{demon_id}", response_model=CompletionResponse)
+@router.patch("/{demon_id}", response_model=CompletionResponse)
 def update_completion(
     db: SessionDep,
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -62,6 +65,26 @@ def update_completion(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completion not found.")
     
     completion_to_update.proof_link = completion.proof_link
+    
+    db.commit()
+    db.refresh(completion_to_update)
+    
+    return completion_to_update
+
+
+@router.patch("/{completion_id}/status", response_model=CompletionResponse)
+def update_completion_status(
+    db: SessionDep, completion_id: int, update_data: CompletionStatusUpdate, current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    # ! Implement admin check here later
+    
+    stmt = select(Completion).where(Completion.id == completion_id)
+    completion_to_update = db.scalar(stmt)
+
+    if not completion_to_update:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completion not found.")
+    
+    completion_to_update.status = update_data.status
     
     db.commit()
     db.refresh(completion_to_update)

@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
+from app.models.db_models import Status
+
 
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=50)
@@ -27,6 +29,7 @@ class DemonlistResponse(BaseModel):
     level_id: int
     preview_link: str | None
     thumbnail: str | None
+    points: float
     
 
 class CompletionCreate(BaseModel):
@@ -36,17 +39,28 @@ class CompletionCreate(BaseModel):
 
 class CompletionResponse(BaseModel):
     demon_id: int
-    status: str
+    status: Status
     
     
 class CompletionUpdate(BaseModel):
     proof_link: str
+    
+
+class CompletionStatusUpdate(BaseModel):
+    status: Status
 
 
 class LeaderboardEntry(BaseModel):
+    id: int
     username: str
-    completions: int
     total_points: int
+    
+
+class LeaderboardProfile(BaseModel):
+    id: int
+    username: str
+    total_points: int
+    completions: list[int]
 
 
 class Token(BaseModel):

@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserCreate, db: SessionDep) -> Token:
+async def register(user_data: UserCreate, db: SessionDep) -> Token:    
     existing_user = get_user_by_email(db, user_data.email)
     if existing_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
@@ -31,7 +31,7 @@ async def register(user_data: UserCreate, db: SessionDep) -> Token:
         email = user_data.email,
         hashed_password = get_password_hash(user_data.password),
         is_active = True,
-        completions = []
+        completions = [],
     )
     
     db.add(new_user)
