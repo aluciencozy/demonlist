@@ -32,6 +32,8 @@ async def register(user_data: UserCreate, db: SessionDep) -> Token:
         hashed_password = get_password_hash(user_data.password),
         is_active = True,
         completions = [],
+        is_superuser = False,
+        avatar_url = None,
     )
     
     db.add(new_user)

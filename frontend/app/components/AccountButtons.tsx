@@ -2,11 +2,25 @@ import Link from "next/link"
 
 const AccountButtons = async () => {
   return (
-    <div>
-      <Link href="/login" className="bg-blue-500 text-white px-4 py-2 rounded mr-2 cursor-pointer">Login</Link>
-      <Link href="/register" className="bg-green-500 text-white px-4 py-2 rounded cursor-pointer">Register</Link>
+    <div className="flex-center gap-5">
+      <button className="flex-center font-mono relative group">
+        <Link
+          href="/login"
+          className="glint-hover flex-center relative rounded-xl px-4 py-2 bg-linear-to-r from-surface/90 to-surface/70 text-sm font-bold text-main overflow-hidden"
+        >
+          Login
+        </Link>
+      </button>
+      <button className="flex-center font-mono relative group">
+        <Link
+          href="/register"
+          className="glint-hover flex-center relative rounded-xl px-4 py-2 bg-linear-to-r from-primary/90 to-primary/70 text-sm font-bold text-main overflow-hidden"
+        >
+          Register
+        </Link>
+      </button>
     </div>
-  )
+  );
 }
 
 export default AccountButtons

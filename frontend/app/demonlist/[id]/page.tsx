@@ -3,12 +3,11 @@ import DemonDetails from '@/app/components/DemonDetails';
 
 const DemonPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
-    <div>
-      <h1>Demon Page</h1>
+    <main className="max-w-7xl mx-auto mt-30 mb-20 relative flex-center flex-col font-figtree">
       <Suspense fallback={<p>Loading demon details...</p>}>
         <DemonDetails params={params} />
       </Suspense>
-    </div>
+    </main>
   );
 };
 

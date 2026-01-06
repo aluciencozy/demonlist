@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 
-from app.models.db_models import Status
+from app.models.db_models import Completion, Status
 
 
 class UserCreate(BaseModel):
@@ -18,6 +18,37 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    is_superuser: bool
+    
+    
+class CompletionUser(BaseModel):
+    id: int
+    username: str
+    # add avatar_url here later
+
+
+class CompletionCreate(BaseModel):
+    demon_id: int
+    proof_link: str | None
+
+
+class CompletionResponse(BaseModel):
+    demon_id: int
+    status: Status
+    
+
+class PendingCompletionResponse(CompletionResponse):
+    id: int
+    proof_link: str | None
+    user: CompletionUser
+
+
+class CompletionUpdate(BaseModel):
+    proof_link: str
+
+
+class CompletionStatusUpdate(BaseModel):
+    status: Status
 
 
 class DemonlistResponse(BaseModel):
@@ -32,34 +63,25 @@ class DemonlistResponse(BaseModel):
     points: float
     
 
-class CompletionCreate(BaseModel):
-    demon_id: int
-    proof_link: str | None
-
-
-class CompletionResponse(BaseModel):
-    demon_id: int
-    status: Status
-    
-    
-class CompletionUpdate(BaseModel):
+class DemonCompletionResponse(BaseModel):
     proof_link: str
-    
+    user: CompletionUser
 
-class CompletionStatusUpdate(BaseModel):
-    status: Status
+
+class DemonDetailResponse(DemonlistResponse):
+    completions: list[DemonCompletionResponse]
 
 
 class LeaderboardEntry(BaseModel):
     id: int
     username: str
-    total_points: int
-    
+    total_points: float
+
 
 class LeaderboardProfile(BaseModel):
     id: int
     username: str
-    total_points: int
+    total_points: float
     completions: list[int]
 
 

@@ -1,30 +1,148 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* @custom-variant dark (&:is(.dark *)); */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface: #130b26;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --color-primary: #5227ff;
+  --color-primary-hover: #5227ff;
+  --color-secondary: #d946ef;
+  --color-muted: #a194b8e6;
+  --color-main: #fff;
+  --color-border: #a994b833;
+  --background: #070010;
+  --foreground: #fff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-secondary: var(--color-secondary);
+  --color-muted: var(--color-muted);
+  --color-main: var(--color-main);
+  --color-border: var(--color-border);
+  --font-poppins: var(--font-poppins);
+  --font-figtree: var(--font-figtree);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@utility card-shadow {
+  box-shadow: 0px 4px 40px 0px #00000066;
+}
+
+@utility flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    @apply font-extrabold text-5xl;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    background: linear-gradient(135deg, #fff, #8660fa, #a855f7, #8400ff, #a855f7, #fff);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 4s ease-in-out infinite;
+  }
+
+  .glint-hover,
+  .glint-hover-large {
+    transition: all 0.6s ease;
+    box-shadow: 0 0 10px #7c3aed55;
+  }
+
+  .glint-hover::before,
+  .glint-hover::after,
+  .glint-hover-large::before,
+  .glint-hover-large::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      0deg, 
+      transparent, 
+      transparent 30%, 
+      rgba(255,255,255,1) 50%      
+    );
+    transform: rotate(-45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+  }
+
+  .glint-hover::before,
+  .glint-hover::after {
+    top: -100%;
+    left: -60%;
+  }
+
+  .glint-hover-large::before,
+  .glint-hover-large::after {
+    top: -150%;
+    left: -100%;
+  }
+
+  .glint-hover:hover,
+  .glint-hover-large:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 100px #7c3aed55;
+  }
+
+  .glint-hover:hover::before {
+    opacity: 1;
+    transform: rotate(-45deg) translateY(150%);
+  }
+
+  .glint-hover-large:hover::before {
+    opacity: 1;
+    transform: rotate(-45deg) translateY(250%);
+  }
+
+  /* .glint-hover:hover::after,
+  .glint-hover-large:hover::after {
+    opacity: 0;
+    transform: rotate(-45deg) translateY(400%);
   } */
-  :root {
-    --background: #000000;
-    --foreground: #ededed;
+
+  .nav-blur {
+    backdrop-filter: blur(1px);
   }
 }
 
 body {
-  background: var(--background);
+  font-family: var(--font-poppins);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
