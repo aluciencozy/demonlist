@@ -53,7 +53,7 @@ class Completion(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     demon_id: Mapped[int] = mapped_column(ForeignKey('demons.id'), nullable=False)
-    proof_link: Mapped[str | None] # ! Store in AWS S3 later
+    proof_link: Mapped[str | None]
     status: Mapped[Status] = mapped_column(
         SQLEnum(Status, name="completion status"),
         default=Status.PENDING,

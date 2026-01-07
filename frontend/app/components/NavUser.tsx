@@ -21,5 +21,5 @@ export default async function NavUser() {
 
   const user = await res.json();
 
-  return <ProfileButton username={user.username} isAdmin={user.is_superuser} id={user.id} />;
+  return <ProfileButton username={user.username} isAdmin={user.is_superuser} id={user.id} avatar_url={user.avatar_url} />;
 }

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const ProfileButton = ({ username, isAdmin, id }: { username: string, isAdmin: boolean, id: number }) => {
+const ProfileButton = ({ username, isAdmin, id, avatar_url }: { username: string, isAdmin: boolean, id: number, avatar_url: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -23,7 +23,7 @@ const ProfileButton = ({ username, isAdmin, id }: { username: string, isAdmin: b
   return (
     <div className="relative flex-center p-2">
       <button onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)} className="rounded-full shadow-xl overflow-hidden hover:scale-110 transition-all duration-200">
-        <Image src="/images/default-pfp.jpg" alt="Default Profile Picture" width={40} height={40} />
+        <Image src={avatar_url || "/images/default-pfp.jpg"} alt="Profile Picture" width={40} height={40} />
       </button>
       <div
         className={`absolute z-20 top-full right-0 bg-background text-white p-2.5 rounded mt-2 border border-border shadow-xl transition-all duration-200 transform origin-top ${

@@ -1,78 +1,116 @@
 'use client';
 
 import { Demon } from '@/types/types';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
-const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[], token: string }) => {
+const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token: string }) => {
   const [selectedDemon, setSelectedDemon] = useState<string>('');
   const [proofVideoUrl, setProofVideoUrl] = useState<string>('');
+  const [proofVideoFile, setProofVideoFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedDemon) {
+      alert('Please select a demon.');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/completions/', {
-        method: 'POST',
-        body: JSON.stringify({ demon_id: selectedDemon, proof_link: proofVideoUrl }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      if (proofVideoUrl) {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/completions/', {
+          method: 'POST',
+          body: JSON.stringify({ demon_id: selectedDemon, proof_link: proofVideoUrl }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        if (!response.ok) throw new Error('Failed to submit URL');
+        alert('Completion submitted successfully!');
+      } else if (proofVideoFile) {
+        const formData = new FormData();
+        formData.append('file', proofVideoFile);
+
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/completions/upload?demon_id=${selectedDemon}`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error('Upload failed');
+        alert('Video uploaded and completion submitted successfully!');
       }
 
-      const data = await response.json();
-      console.log('Submission successful', data);
-
-      setSelectedDemon('');
-      setProofVideoUrl('');
+      resetForm();
     } catch (e) {
-      console.error('Submission failed', e);
+      console.error(e);
+      alert('Submission failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setSelectedDemon('');
+    setProofVideoUrl('');
+    setProofVideoFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex-center flex-col gap-5">
-      <label htmlFor="demon-select" className="sr-only">
-        Select Demon
-      </label>
       <select
-        id="demon-select"
-        className="w-full p-3 border border-border rounded outline-none"
+        className="w-full p-3 border border-border rounded outline-none bg-background"
         value={selectedDemon}
         onChange={(e) => setSelectedDemon(e.target.value)}
+        required
+        disabled={isSubmitting}
       >
-        <option value="" className="bg-background text-main">
-          Select Demon
-        </option>
-        {demonlist.map((demon: Demon) => (
-          <option key={demon.id} value={demon.id} className="bg-background text-main">
+        <option value="">Select Demon</option>
+        {demonlist.map((demon) => (
+          <option key={demon.id} value={demon.id}>
             {demon.name}
           </option>
         ))}
       </select>
-      <label htmlFor="proof-video-url" className="sr-only">
-        Proof Video URL
-      </label>
-      <input
-        type="url"
-        id="proof-video-url"
-        placeholder="Proof Video URL"
-        className="w-full p-3 border border-border rounded outline-none"
-        value={proofVideoUrl}
-        onChange={(e) => setProofVideoUrl(e.target.value)}
-      />
+
+      <div className="w-full flex-center gap-10">
+        <input
+          type="url"
+          placeholder="Proof Video URL"
+          className="w-full p-3 border border-border rounded outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          value={proofVideoUrl}
+          onChange={(e) => setProofVideoUrl(e.target.value)}
+          disabled={!!proofVideoFile || isSubmitting}
+        />
+
+        <p className="text-center min-w-max">- OR -</p>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="video/mp4,video/quicktime,video/webm"
+          onChange={(e) => setProofVideoFile(e.target.files ? e.target.files[0] : null)}
+          className="w-full p-3 border border-border rounded outline-none cursor-pointer disabled:opacity-50"
+          disabled={!!proofVideoUrl || isSubmitting}
+        />
+      </div>
+
       <button
         type="submit"
-        className="w-full bg-primary hover:bg-primary/40 hover:text-main text-white font-bold py-2 px-4 rounded cursor-pointer transition-colors duration-200"
+        disabled={isSubmitting}
+        className="w-full bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded transition-colors disabled:bg-gray-400"
       >
-        Submit
+        {isSubmitting ? 'Submitting...' : 'Submit'}
       </button>
     </form>
   );
-}
+};
 
-export default SubmitCompletionForm
+export default SubmitCompletionForm;

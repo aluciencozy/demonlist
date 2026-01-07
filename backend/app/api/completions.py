@@ -1,15 +1,17 @@
 from typing import Annotated
 
-from fastapi import HTTPException, status, APIRouter, Depends
+from fastapi import HTTPException, UploadFile, status, APIRouter, Depends, File
 from sqlalchemy import select
 
 from app.dependencies.auth import SessionDep
 from app.models.db_models import User, Completion, Status
-from app.models.api_models import CompletionResponse, CompletionCreate, CompletionUpdate, CompletionStatusUpdate, PendingCompletionResponse
+from app.models.api_models import CompletionResponse, CompletionCreate, CompletionStatusUpdate, PendingCompletionResponse
 from app.dependencies.auth import get_current_active_user, get_current_admin_user
+from app.services.s3 import S3Service
 
 
 router = APIRouter(prefix="/completions", responses={401: {"description": "Not authenticated"}}, tags=["completions"])
+s3_service = S3Service()
 
 
 @router.get("/", response_model=list[CompletionResponse])
@@ -46,12 +48,18 @@ def get_completion(
 def submit_completion(
     db: SessionDep, current_user: Annotated[User, Depends(get_current_active_user)], completion: CompletionCreate
 ):
+    stmt = select(Completion).where(Completion.demon_id == completion.demon_id, Completion.user_id == current_user.id)
+    existing_completion = db.scalar(stmt)
+    
+    if existing_completion:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Completion for this demon already exists.")
+    
     new_completion = Completion(
         user_id=current_user.id,
         demon_id=completion.demon_id,
-        proof_link=completion.proof_link, # ! this is probably None, change later with AWS S3
+        proof_link=completion.proof_link,
     )
-    
+
     db.add(new_completion)
     db.commit()
     db.refresh(new_completion)
@@ -59,25 +67,49 @@ def submit_completion(
     return new_completion
 
 
-@router.patch("/{demon_id}", response_model=CompletionResponse)
-def update_completion_video(
-    db: SessionDep,
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    completion: CompletionUpdate,
-    demon_id: int
-):
+@router.post("/upload")
+def submit_completion_file(
+    db: SessionDep, current_user: Annotated[User, Depends(get_current_active_user)], file: UploadFile = File(...), demon_id: int | None = None
+) -> dict:
     stmt = select(Completion).where(Completion.demon_id == demon_id, Completion.user_id == current_user.id)
-    completion_to_update = db.scalar(stmt)
+    completion = db.scalar(stmt)
+    
+    if completion:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Completion for this demon already exists.")
+    
+    if file.content_type not in ["video/mp4", "video/quicktime", "video/webm"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file type. Only MP4, MOV, WEBM allowed.")
 
-    if not completion_to_update:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completion not found.")
-    
-    completion_to_update.proof_link = completion.proof_link
-    
+    if not file.filename:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No file uploaded")
+
+    if not demon_id:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Demon ID is required")
+
+    if file.size is not None and file.size > 100 * 1024 * 1024:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="File size exceeds the 100MB limit")
+
+    extension = file.filename.split(".")[-1]
+    file.filename = f"{current_user.id}_completion_{demon_id}.{extension}"
+
+    url = s3_service.upload_file(file, folder="completions")
+
+    if not url:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to upload completion video"
+        )
+
+    new_completion = Completion(
+        user_id=current_user.id,
+        demon_id=demon_id,
+        proof_link=url,
+    )
+
+    db.add(new_completion)
     db.commit()
-    db.refresh(completion_to_update)
-    
-    return completion_to_update
+    db.refresh(new_completion)
+
+    return {"demon_id": demon_id, "status": new_completion.status, "proof_link": url}
 
 
 @router.patch("/{completion_id}/status", response_model=CompletionResponse)

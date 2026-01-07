@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 
 interface SettingsClientProps {
@@ -8,30 +9,68 @@ interface SettingsClientProps {
     username: string;
     is_superuser: boolean;
     id: number;
+    avatar_url: string | null;
   };
+  token: string;
+  timestamp: number;
 }
 
-const SettingsClient = ({ user }: SettingsClientProps) => {
-  //! Add functionality to change username/password/profile picture later
-  const handleProfilePictureChange = () => {};
+const SettingsClient = ({ user, token, timestamp }: SettingsClientProps) => {
+  //! Add functionality to change username/password later
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    user.avatar_url ? `${user.avatar_url}?t=${timestamp}` : null
+  );
+
+  const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/auth/me/avatar', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+
+      setAvatarUrl(`${data.url}?t=${Date.now()}`);
+      alert('Profile picture uploaded successfully');
+    } catch (e) {
+      console.error(e);
+      alert('Failed to upload profile picture');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleUsernameChange = () => {};
   const handlePasswordChange = () => {};
 
   return (
     <div className="flex-center w-full gap-50 font-figtree">
       <div className="min-w-max h-full relative">
-        {/* //! put user profile picture here later instead of default */}
         <Image
-          src="/images/default-pfp.jpg"
+          src={avatarUrl || "/images/default-pfp.jpg"}
           alt="Profile Picture"
           width={150}
           height={150}
           className="rounded-full relative"
         />
         <button
-          onClick={handleProfilePictureChange}
           className="glint-hover-large flex-center rounded-full p-3 bg-surface text-sm font-bold text-main overflow-hidden font-figtree absolute -bottom-1 -right-1"
         >
+          <input type="file" onChange={handleProfilePictureChange} className="absolute inset-0 opacity-0 cursor-pointer" />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

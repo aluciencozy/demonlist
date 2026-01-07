@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL('https://i.ytimg.com/**'),
       new URL('https://img.youtube.com/**'),
+      {
+        protocol: 'https',
+        hostname: '**amazonaws.com',
+      }
     ],
   },
 };

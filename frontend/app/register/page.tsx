@@ -106,7 +106,7 @@ const Register = () => {
             type="submit"
             className="bg-primary hover:bg-primary/40 hover:text-main text-white font-bold py-2 px-4 rounded cursor-pointer transition-colors duration-200 mt-5"
           >
-            Login
+            Register
           </button>
         </form>
         <div className="flex gap-x-2 justify-center items-center">

@@ -17,10 +17,11 @@ const SettingsServer = async () => {
   if (!res.ok) return <p>Failed to load user data</p>;
 
   const user = await res.json();
-  console.log('User data:', user);
+
+  const currentTimestamp = Date.now();
 
   return (
-    <SettingsClient user={user} />
+    <SettingsClient user={user} token={token.value} timestamp={currentTimestamp} />
   );
 }
 

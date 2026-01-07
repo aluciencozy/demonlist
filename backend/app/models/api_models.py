@@ -19,8 +19,9 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     is_superuser: bool
-    
-    
+    avatar_url: str | None
+
+
 class CompletionUser(BaseModel):
     id: int
     username: str
@@ -30,12 +31,12 @@ class CompletionUser(BaseModel):
 class CompletionCreate(BaseModel):
     demon_id: int
     proof_link: str | None
-
+    
 
 class CompletionResponse(BaseModel):
     demon_id: int
     status: Status
-    
+
 
 class PendingCompletionResponse(CompletionResponse):
     id: int
@@ -61,7 +62,7 @@ class DemonlistResponse(BaseModel):
     preview_link: str | None
     thumbnail: str | None
     points: float
-    
+
 
 class DemonCompletionResponse(BaseModel):
     proof_link: str
