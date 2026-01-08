@@ -4,11 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { User } from "@/types/types";
 
-const ProfileButton = ({ username, isAdmin, id, avatar_url }: { username: string, isAdmin: boolean, id: number, avatar_url: string }) => {
+const ProfileButton = ({ user }: { user: User }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [timestamp, setTimestamp] = useState<number | null>(null);
+
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const handleAvatarUpdate = () => {
+      setTimestamp(Date.now());
+    };
+    
+    window.addEventListener('avatar-updated', handleAvatarUpdate);
+    return () => window.removeEventListener('avatar-updated', handleAvatarUpdate);
+  }, [router]);
 
   useEffect(() => {
     setIsOpen(false);
@@ -20,10 +32,13 @@ const ProfileButton = ({ username, isAdmin, id, avatar_url }: { username: string
     router.refresh();
   };
 
+  const baseAvatarUrl = user.avatar_url || '/images/default-pfp.jpg';
+  const currentAvatarUrl = timestamp ? `${baseAvatarUrl}?t=${timestamp}` : baseAvatarUrl;
+
   return (
     <div className="relative flex-center p-2">
       <button onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)} className="rounded-full shadow-xl overflow-hidden hover:scale-110 transition-all duration-200">
-        <Image src={avatar_url || "/images/default-pfp.jpg"} alt="Profile Picture" width={40} height={40} />
+        <Image src={currentAvatarUrl} alt="Profile Picture" width={40} height={40} />
       </button>
       <div
         className={`absolute z-20 top-full right-0 bg-background text-white p-2.5 rounded mt-2 border border-border shadow-xl transition-all duration-200 transform origin-top ${
@@ -32,12 +47,12 @@ const ProfileButton = ({ username, isAdmin, id, avatar_url }: { username: string
       >
         <ul className="flex flex-col gap-y-2.5 font-figtree font-semibold text-muted">
           <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
-            <Link href={`/leaderboard/${id}`}>Profile</Link>
+            <Link href={`/leaderboard/${user.id}`}>Profile</Link>
           </li>
           <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
             <Link href="/settings">Settings</Link>
           </li>
-          {isAdmin && <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
+          {user.is_superuser && <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
             <Link href="/admin">Admin</Link>
           </li>}
           <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">

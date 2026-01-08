@@ -1,21 +1,18 @@
 from typing import Annotated
 from datetime import timedelta
 
-from fastapi import Depends, status, HTTPException, UploadFile, APIRouter, File
+from fastapi import Depends, status, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.db.db import SessionDep
 from app.models.db_models import User
-from app.models.api_models import Token, UserResponse, UserCreate
-from app.dependencies.auth import get_current_active_user
+from app.models.api_models import Token, UserCreate
 from app.core.config import settings
-from app.services.s3 import S3Service
 from app.services.auth_service import (
     create_access_token, get_password_hash, authenticate_user, get_user_by_email
 )
 
 
-s3_service = S3Service()
 router = APIRouter(
     prefix="/auth", responses={401: {"description": "Not authenticated"}}, tags=["auth"]
 )
@@ -66,42 +63,6 @@ async def login(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
-
-
-@router.get("/me", response_model=UserResponse)
-async def read_me(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return current_user
-
-
-@router.post("/me/avatar")
-def upload_avatar(
-    db: SessionDep,
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    file: UploadFile = File(...),
-) -> dict:
-    if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST, detail="Invalid file type. Only JPEG, PNG, WEBP allowed."
-        )
-        
-    if not file.filename:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No file uploaded")
-    extension = file.filename.split(".")[-1]
-    file.filename = f"{current_user.id}_avatar.{extension}"
-
-    url = s3_service.upload_file(file, folder="avatars")
-
-    if not url:
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to upload image")
-
-    current_user.avatar_url = url
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-
-    return {"message": "Avatar uploaded successfully", "url": url}
 
 
 @router.post("/logout")

@@ -51,8 +51,12 @@ def submit_completion(
     stmt = select(Completion).where(Completion.demon_id == completion.demon_id, Completion.user_id == current_user.id)
     existing_completion = db.scalar(stmt)
     
-    if existing_completion:
+    if existing_completion and existing_completion.status != Status.REJECTED:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Completion for this demon already exists.")
+    
+    if existing_completion and existing_completion.status == Status.REJECTED:
+        db.delete(existing_completion)
+        db.commit()
     
     new_completion = Completion(
         user_id=current_user.id,
@@ -74,7 +78,7 @@ def submit_completion_file(
     stmt = select(Completion).where(Completion.demon_id == demon_id, Completion.user_id == current_user.id)
     completion = db.scalar(stmt)
     
-    if completion:
+    if completion and completion.status != Status.REJECTED:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Completion for this demon already exists.")
     
     if file.content_type not in ["video/mp4", "video/quicktime", "video/webm"]:

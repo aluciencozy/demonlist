@@ -2,6 +2,7 @@
 
 import { Demon } from '@/types/types';
 import { useState, useRef } from 'react';
+import { toast } from 'sonner';
 
 const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token: string }) => {
   const [selectedDemon, setSelectedDemon] = useState<string>('');
@@ -14,7 +15,7 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDemon) {
-      alert('Please select a demon.');
+      toast.error('Please select a demon.');
       return;
     }
 
@@ -22,7 +23,7 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
 
     try {
       if (proofVideoUrl) {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/completions/', {
+        const res = await fetch('http://127.0.0.1:8000/api/v1/completions/', {
           method: 'POST',
           body: JSON.stringify({ demon_id: selectedDemon, proof_link: proofVideoUrl }),
           headers: {
@@ -31,26 +32,44 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
           },
         });
 
-        if (!response.ok) throw new Error('Failed to submit URL');
-        alert('Completion submitted successfully!');
+        if (!res.ok) {
+          const errorData = await res.json();
+          let errorMessage = 'Something went wrong';
+
+          if (typeof errorData.detail === 'string') errorMessage = errorData.detail;
+          else if (Array.isArray(errorData.detail)) errorMessage = errorData.detail[0].msg;
+
+          throw new Error(errorMessage);
+        }
+
+        toast.success('Completion submitted successfully!');
       } else if (proofVideoFile) {
         const formData = new FormData();
         formData.append('file', proofVideoFile);
 
-        const response = await fetch(`http://127.0.0.1:8000/api/v1/completions/upload?demon_id=${selectedDemon}`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/completions/upload?demon_id=${selectedDemon}`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
 
-        if (!response.ok) throw new Error('Upload failed');
-        alert('Video uploaded and completion submitted successfully!');
+        if (!res.ok) {
+          const errorData = await res.json();
+          let errorMessage = 'Something went wrong';
+
+          if (typeof errorData.detail === 'string') errorMessage = errorData.detail;
+          else if (Array.isArray(errorData.detail)) errorMessage = errorData.detail[0].msg;
+
+          throw new Error(errorMessage);
+        }
+
+        toast.success('Video uploaded and completion submitted successfully!');
       }
 
       resetForm();
     } catch (e) {
       console.error(e);
-      alert('Submission failed. Please try again.');
+      toast.error(e instanceof Error ? e.message : 'Submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

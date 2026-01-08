@@ -2,35 +2,16 @@ import { cacheTag, cacheLife } from 'next/cache';
 import { cookies } from 'next/headers';
 import SubmitCompletionForm from '@/app/components/SubmitCompletionForm';
 import SubmitCompletionUnauthorized from '@/app/components/SubmitCompletionUnauthorized';
+import { getCurrentUser } from '@/lib/auth';
+import { getDemonlist } from '@/lib/demonlist';
 
 const SubmitCompletion = async () => {
+  const user = await getCurrentUser();
+
+  if (!user) return <SubmitCompletionUnauthorized message="You must be logged in to submit a completion :/" />;
+
   const cookieStore = await cookies();
-  const token = cookieStore.get('access_token');
-
-  if (!token) return <SubmitCompletionUnauthorized />;
-
-  const res = await fetch('http://127.0.0.1:8000/api/v1/auth/me', {
-    headers: {
-      Authorization: `Bearer ${token.value}`,
-    },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) return <SubmitCompletionUnauthorized />;
-
-  const user = await res.json();
-
-  const getDemonlist = async () => {
-    'use cache';
-
-    cacheTag('demonlist');
-    cacheLife('hours');
-
-    const response = await fetch('http://127.0.0.1:8000/api/v1/demonlist/');
-    if (!response.ok) throw new Error('Failed to fetch demonlist');
-
-    return await response.json();
-  };
+  const token = cookieStore.get('access_token')?.value || '';
 
   const demonlist = await getDemonlist();
 
@@ -40,7 +21,7 @@ const SubmitCompletion = async () => {
         Submit Completion
       </h1>
       <div className="mt-10 w-full max-w-3xl">
-        <SubmitCompletionForm demonlist={demonlist} token={token.value} />
+        <SubmitCompletionForm demonlist={demonlist} token={token} />
       </div>
     </main>
   );

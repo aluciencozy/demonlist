@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 const Register = () => {
   const router = useRouter();
@@ -13,8 +14,13 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters long');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/register', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         body: JSON.stringify({ username, email, password }),
         headers: {
@@ -22,17 +28,29 @@ const Register = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      if (!res.ok) {
+        const errorData = await res.json();
+        let errorMessage = 'Registration failed';
+
+        if (typeof errorData.detail === 'string') errorMessage = errorData.detail;
+        else if (Array.isArray(errorData.detail)) errorMessage = errorData.detail[0].msg;
+
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      const data = await res.json();
       console.log('Register successful', data);
       
       router.push('/');
       router.refresh();
+      toast.success('Registered successfully!');
     } catch (e) {
       console.error('Register failed', e);
+      toast.error(e instanceof Error ? e.message : 'Registration failed, please try again.');
+    } finally {
+      setUsername('');
+      setEmail('');
+      setPassword('');
     }
   };
 

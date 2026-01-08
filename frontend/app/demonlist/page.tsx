@@ -1,34 +1,11 @@
 import DemonCard from '@/app/components/DemonCard';
-import { cacheTag, cacheLife } from 'next/cache';
 import { Demon, Profile } from '@/types/types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getDemonlist } from '@/lib/demonlist';
+import { getLeaderboard } from '@/lib/leaderboard';
 
 const DemonlistPage = async () => {
-  const getDemonlist = async () => {
-    'use cache';
-
-    cacheTag('demonlist');
-    cacheLife('hours');
-
-    const response = await fetch('http://127.0.0.1:8000/api/v1/demonlist/');
-    if (!response.ok) throw new Error('Failed to fetch demonlist');
-
-    return await response.json();
-  };
-
-  const getLeaderboard = async () => {
-    'use cache';
-
-    cacheTag('leaderboard');
-    cacheLife('hours');
-
-    const response = await fetch('http://127.0.0.1:8000/api/v1/leaderboard/');
-    if (!response.ok) throw new Error('Failed to fetch leaderboard');
-
-    return await response.json();
-  };
-
   const demonlist = await getDemonlist();
   const leaderboard = await getLeaderboard();
 

@@ -1,14 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
 import AnimatedCompletionList from "@/app/components/AnimatedCompletionList";
 import { Completion } from "@/types/types";
-import Link from "next/link";
+import { getDemon } from "@/lib/demonlist";
 
 const DemonDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const response = await fetch(`http://127.0.0.1:8000/api/v1/demonlist/${id}`);
-  if (!response.ok) throw new Error('Failed to fetch');
-
-  const demon = await response.json();
+  
+  const demon = await getDemon(id);
 
   return (
     <div className="flex-center flex-col w-full font-figtree gap-10">

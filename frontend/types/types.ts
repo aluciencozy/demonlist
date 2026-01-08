@@ -22,11 +22,19 @@ export interface Demon {
   points: number;
 }
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  is_superuser: boolean;
+  avatar_url: string | null;
+}
+
 export interface Profile {
   id: number;
   username: string;
   total_points: number;
-  completions: number[] | null;
+  completions: number[] | Demon[] | null;
 }
 
 export interface Completion {

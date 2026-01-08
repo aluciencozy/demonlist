@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from 'sonner';
 
 const Login = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
@@ -21,17 +22,28 @@ const Login = () => {
         }
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      if (!res.ok) {
+        const errorData = await res.json();
+        let errorMessage = 'Login failed';
+
+        if (typeof errorData.detail === 'string') errorMessage = errorData.detail;
+        else if (Array.isArray(errorData.detail)) errorMessage = errorData.detail[0].msg;
+
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      const data = await res.json();
       console.log('Login successful', data);
 
       router.push('/');
       router.refresh();
+      toast.success('Logged in successfully!');
     } catch (e) {
       console.error('Login failed', e);
+      toast.error(e instanceof Error ? e.message : 'Login failed, please try again.');
+    } finally {
+      setEmail('');
+      setPassword('');
     }
   }
 

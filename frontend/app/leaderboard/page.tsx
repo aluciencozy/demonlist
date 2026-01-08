@@ -1,20 +1,8 @@
-import { cacheTag, cacheLife } from 'next/cache';
 import Image from 'next/image';
 import { Profile } from '@/types/types';
 import AnimatedLeaderboardList from '@/app/components/AnimatedLeaderboardList';
 import Link from 'next/link';
-
-const getLeaderboard = async () => {
-  'use cache';
-
-  cacheTag('leaderboard');
-  cacheLife('hours');
-
-  const response = await fetch('http://127.0.0.1:8000/api/v1/leaderboard/');
-  if (!response.ok) throw new Error('Failed to fetch leaderboard');
-
-  return await response.json();
-};
+import { getLeaderboard } from '@/lib/leaderboard';
 
 const LeaderboardPage = async () => {
   const leaderboard: Profile[] = await getLeaderboard();

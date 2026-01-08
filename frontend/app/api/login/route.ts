@@ -9,16 +9,23 @@ export async function POST(req: NextRequest) {
   formData.append('username', email);
   formData.append('password', password);
 
-  const response = await fetch('http://127.0.0.1:8000/api/v1/auth/token', {
+  const res = await fetch('http://127.0.0.1:8000/api/v1/auth/token', {
     method: 'POST',
     body: formData.toString(),
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   });
 
-  if (!response.ok) 
-    return NextResponse.json({ error: 'Login failed' }, { status: 401 });
+  if (!res.ok) {
+    const errorData = await res.json();
+    let errorMessage = 'Login failed';
+
+    if (typeof errorData.detail === 'string') errorMessage = errorData.detail;
+    else if (Array.isArray(errorData.detail)) errorMessage = errorData.detail[0].msg;
+
+    return NextResponse.json({ detail: errorMessage }, { status: 401 });
+  }
   
-  const data = await response.json();
+  const data = await res.json();
 
   const cookieStore = await cookies();
   cookieStore.set({

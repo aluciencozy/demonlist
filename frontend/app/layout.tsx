@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Figtree } from "next/font/google";
 import "./globals.css";
+import { Toaster } from 'sonner';
 import NavBar from "@/app/components/NavBar";
 
 const poppins = Poppins({
@@ -29,7 +30,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${figtree.variable} antialiased`}>
         <NavBar />
         <div className="w-full">{children}</div>
-        {/* pt-18 */}
+        <Toaster position="top-center" richColors={true} />
       </body>
     </html>
   );

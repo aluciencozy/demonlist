@@ -4,7 +4,7 @@ from app.models.db_models import Completion, Status
 
 
 class UserCreate(BaseModel):
-    username: str = Field(min_length=3, max_length=50)
+    username: str = Field(min_length=3, max_length=20)
     email: EmailStr
     password: str = Field(min_length=8)
 
@@ -22,10 +22,14 @@ class UserResponse(BaseModel):
     avatar_url: str | None
 
 
+class UserPasswordUpdate(BaseModel):
+    old_password: str
+    new_password: str = Field(min_length=8)
+
+
 class CompletionUser(BaseModel):
     id: int
     username: str
-    # add avatar_url here later
 
 
 class CompletionCreate(BaseModel):
