@@ -8,18 +8,38 @@ const NavLinks = () => {
 
   return (
     <>
-      <li className={`hover:text-main hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-main after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${pathname === '/' ? 'text-main after:opacity-100' : ''}`}>
-        <Link href="/">Home</Link>
-      </li>
-      <li className={`hover:text-main hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-main after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${pathname === '/demonlist' ? 'text-main after:opacity-100' : ''}`}>
-        <Link href="/demonlist">Demonlist</Link>
-      </li>
-      <li className={`hover:text-main hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-main after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${pathname === '/leaderboard' ? 'text-main after:opacity-100' : ''}`}>
-        <Link href="/leaderboard">Leaderboard</Link>
-      </li>
-      <li className={`hover:text-main hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-main after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${pathname === '/submit-completion' ? 'text-main after:opacity-100' : ''}`}>
-        <Link href="/submit-completion">Submit Completion</Link>
-      </li>
+      <Link
+        href="/"
+        className={`text-primary hover:text-red hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-red after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${
+          pathname === '/' ? 'text-red after:opacity-100' : ''
+        }`}
+      >
+        <li>Home</li>
+      </Link>
+      <Link
+        href="/demonlist"
+        className={`text-primary hover:text-red hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-red after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${
+          pathname === '/demonlist' ? 'text-red after:opacity-100' : ''
+        }`}
+      >
+        <li>Demonlist</li>
+      </Link>
+      <Link
+        href="/leaderboard"
+        className={`text-primary hover:text-red hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-red after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${
+          pathname === '/leaderboard' ? 'text-red after:opacity-100' : ''
+        }`}
+      >
+        <li>Leaderboard</li>
+      </Link>
+      <Link
+        href="/submit-completion"
+        className={`text-primary hover:text-red hover:-translate-y-0.5 transition-all duration-200 text-shadow-black text-shadow-lg relative after:bg-red after:w-1.5 after:h-1.5 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1/3 after:rounded-full after:opacity-0 after:content-[''] after:transition-opacity after:duration-200 hover:after:opacity-100 ${
+          pathname === '/submit-completion' ? 'text-red after:opacity-100' : ''
+        }`}
+      >
+        <li>Submit Completion</li>
+      </Link>
     </>
   );
 }

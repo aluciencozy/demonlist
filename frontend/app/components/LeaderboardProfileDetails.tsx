@@ -21,10 +21,10 @@ const LeaderboardProfileDetails = async ({ params }: { params: Promise<{ id: str
   return (
     <div className="flex-center flex-col gap-15 font-figtree">
       <div className="flex-center flex-col gap-2">
-        <h1 className="gradient-text text-7xl">{profile.username}</h1>
-        <p className="text-muted text-xl">Points: {profile.total_points.toFixed(2)}</p>
+        <h1 className="text-7xl">{profile.username}</h1>
+        <p className="text-xl text-neutral-400">Points: {profile.total_points.toFixed(2)}</p>
       </div>
-      <div className="w-full max-w-3xl flex-center flex-col">
+      <div className="w-full max-w-3xl flex justify-center flex-col">
         <h2 className="text-3xl mb-5">Completions</h2>
         <ul className="flex flex-col gap-4">
           {profile.completions.map((demon: Demon, index: number) => (

@@ -1,16 +1,21 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "@/types/types";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const ProfileButton = ({ user }: { user: User }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [timestamp, setTimestamp] = useState<number | null>(null);
-
-  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -22,10 +27,6 @@ const ProfileButton = ({ user }: { user: User }) => {
     return () => window.removeEventListener('avatar-updated', handleAvatarUpdate);
   }, [router]);
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
-
   const handleLogout = async () => {
     await fetch('http://localhost:3000/api/logout', { method: 'POST' });
     router.push('/');
@@ -36,33 +37,48 @@ const ProfileButton = ({ user }: { user: User }) => {
   const currentAvatarUrl = timestamp ? `${baseAvatarUrl}?t=${timestamp}` : baseAvatarUrl;
 
   return (
-    <div className="relative flex-center p-2">
-      <button onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)} className="rounded-full shadow-xl overflow-hidden hover:scale-110 transition-all duration-200">
-        <Image src={currentAvatarUrl} alt="Profile Picture" width={40} height={40} />
-      </button>
-      <div
-        className={`absolute z-20 top-full right-0 bg-background text-white p-2.5 rounded mt-2 border border-border shadow-xl transition-all duration-200 transform origin-top ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-        }`}
-      >
-        <ul className="flex flex-col gap-y-2.5 font-figtree font-semibold text-muted">
-          <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
-            <Link href={`/leaderboard/${user.id}`}>Profile</Link>
-          </li>
-          <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
-            <Link href="/settings">Settings</Link>
-          </li>
-          {user.is_superuser && <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
-            <Link href="/admin">Admin</Link>
-          </li>}
-          <li className="hover:text-main hover:-translate-y-0.5 transition-all duration-200">
-            <button className="cursor-pointer" onClick={handleLogout}>
-              Logout
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="rounded-full hover:scale-110 transition-all duration-200 outline-none">
+        <Avatar>
+          <AvatarImage src={currentAvatarUrl} alt="Profile" />
+          <AvatarFallback>{user.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-48 font-figtree">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link href={`/leaderboard/${user.id}`} className="cursor-pointer">
+            Profile
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link href="/settings" className="cursor-pointer">
+            Settings
+          </Link>
+        </DropdownMenuItem>
+
+        {user.is_superuser && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin" className="cursor-pointer">
+              Admin
+            </Link>
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="cursor-pointer text-red-500 focus:text-red-500"
+        >
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

@@ -26,10 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={`${poppins.variable} ${figtree.variable} antialiased`}>
         <NavBar />
-        <div className="w-full">{children}</div>
+        <div className="w-full font-figtree">{children}</div>
         <Toaster position="top-center" richColors={true} />
       </body>
     </html>
