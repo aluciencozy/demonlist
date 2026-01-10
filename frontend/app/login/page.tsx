@@ -1,25 +1,42 @@
 'use client'
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from 'sonner';
+import { CardContent, CardHeader, Card, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FieldGroup, FieldLabel, Field, FieldError } from "@/components/ui/field";
+import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  email: z.email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+})
+
+type FormFields = z.infer<typeof formSchema>;
 
 const Login = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<FormFields>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    }
+  })
 
+  async function onSubmit(data: FormFields) {
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: data.email, password: data.password }),
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
       });
 
       if (!res.ok) {
@@ -32,8 +49,8 @@ const Login = () => {
         throw new Error(errorMessage);
       }
 
-      const data = await res.json();
-      console.log('Login successful', data);
+      const responseData = await res.json();
+      console.log('Login successful', responseData);
 
       router.push('/');
       router.refresh();
@@ -41,79 +58,85 @@ const Login = () => {
     } catch (e) {
       console.error('Login failed', e);
       toast.error(e instanceof Error ? e.message : 'Login failed, please try again.');
-    } finally {
-      setEmail('');
-      setPassword('');
+      form.setError('root', { message: e instanceof Error ? e.message : 'Login failed' });
     }
   }
 
   return (
     <main className="h-screen flex-center flex-col bg-background font-figtree">
-      <div className="flex flex-col items-center h-112.5 w-[90%] sm:h-125 sm:w-125 shadow-lg rounded-sm md:p-12 sm:p-9 p-7">
-        <div className="relative">
-          <h1 className="text-3xl font-bold mb-5 text-shadow-sm text-shadow-primary after:h-0.5 after:w-[180%] after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:bg-primary after:shadow-xl">
-            Login
-          </h1>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="h-full w-full flex flex-col gap-y-5 justify-center"
-        >
-          <div className="relative flex flex-col w-full after:w-full after:h-0.5 after:bg-primary after:absolute after:bottom-0 after:left-0 after:transition-all after:duration-300 after:content-[''] after:scale-x-0 after:origin-center focus-within:after:scale-x-100">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              placeholder=" "
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="peer bg-background relative border-primary shadow-sm outline-0 w-full px-4 pt-5 pb-1 transition-all duration-300 focus:outline-none"
-            />
-            <label
-              htmlFor="email"
-              className="text-lg tracking-wide absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300 peer-placeholder-shown:scale-100 peer-focus:scale-60 peer-focus:-translate-y-7 peer-focus:translate-x-[-20%] peer-[:not(:placeholder-shown)]:scale-60 peer-[:not(:placeholder-shown)]:-translate-y-7 peer-[:not(:placeholder-shown)]:translate-x-[-20%] peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:text-gray-500"
-            >
-              Email
-            </label>
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>Enter your email below to login to your account.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={form.handleSubmit(onSubmit)} id="login-form">
+            <FieldGroup>
+              <Controller
+                name="email"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="login-email">Email</FieldLabel>
+                    <Input
+                      {...field}
+                      id="login-email"
+                      type="email"
+                      placeholder="hello@world.com"
+                      autoComplete="email"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="login-password">Password</FieldLabel>
+                    <Input
+                      {...field}
+                      id="login-password"
+                      type="password"
+                      placeholder="Your password"
+                      autoComplete="current-password"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+          </form>
+        </CardContent>
+        <CardFooter className="flex-col mt-1">
+          <Field orientation="responsive">
+            <Button type="submit" form="login-form" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Logging in...' : 'Login'}
+            </Button>
+            <p className="text-center">
+              {form.formState.errors.root && <FieldError errors={[form.formState.errors.root]} />}
+            </p>
+          </Field>
+          <div className="text-center mt-2">
+            <span>Don't have an account?</span>
+            <Button variant="link" asChild className="text-base text-red">
+              <Link href="/register">
+                Register
+              </Link>
+            </Button>
           </div>
-          <div className="relative flex flex-col w-full after:w-full after:h-0.5 after:bg-primary after:absolute after:bottom-0 after:left-0 after:transition-all after:duration-300 after:content-[''] after:scale-x-0 after:origin-center focus-within:after:scale-x-100">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              placeholder=" "
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="peer bg-background relative border-primary shadow-sm outline-0 w-full px-4 pt-5 pb-1 transition-all duration-300 focus:outline-none"
-            />
-            <label
-              htmlFor="password"
-              className="text-lg tracking-wide absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300 peer-placeholder-shown:scale-100 peer-focus:scale-60 peer-focus:-translate-y-7 peer-focus:translate-x-[-20%] peer-[:not(:placeholder-shown)]:scale-60 peer-[:not(:placeholder-shown)]:-translate-y-7 peer-[:not(:placeholder-shown)]:translate-x-[-20%] peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:text-gray-500"
-            >
-              Password
-            </label>
-          </div>
-          <button
-            type="submit"
-            className="bg-primary hover:bg-primary/40 hover:text-main text-white font-bold py-2 px-4 rounded cursor-pointer transition-colors duration-200 mt-5"
-          >
-            Login
-          </button>
-        </form>
-        <div className="flex gap-x-2 justify-center items-center">
-          <p className="text-white">Not registered?</p>
-          <Link
-            href="/register"
-            className="text-primary hover:text-secondary transition-colors duration-300"
-          >
-            Sign Up
-          </Link>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </main>
   );
 }
 
 export default Login
+
+// const router = useRouter();
+  // const [email, setEmail] = useState('')
+  // const [password, setPassword] = useState('')
