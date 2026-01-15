@@ -1,5 +1,5 @@
 import boto3
-from botocore.exceptions import NoCredentialsError
+from botocore.exceptions import NoCredentialsError, ClientError
 from fastapi import UploadFile
 
 from app.core.config import settings
@@ -28,9 +28,7 @@ class S3Service:
                 file.file,
                 AWS_BUCKET_NAME,
                 file_path,
-                ExtraArgs={
-                    "ContentType": file.content_type
-                },
+                ExtraArgs={"ContentType": file.content_type},
             )
 
             url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{file_path}"
@@ -39,7 +37,19 @@ class S3Service:
         except NoCredentialsError:
             print("Credentials not available")
             return None
-        
+
         except Exception as e:
             print(f"Something went wrong: {e}")
             return None
+
+    def delete_file(self, file_url: str):
+        key = file_url.split(
+            f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/"
+        )[-1]
+
+        try:
+            self.s3_client.delete_object(Bucket=AWS_BUCKET_NAME, Key=key)
+            return True
+        except ClientError as e:
+            print(f"Error deleting file: {e}")
+            return False

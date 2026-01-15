@@ -42,7 +42,7 @@ const CompletionCards = async () => {
         <h1 className="font-bold text-7xl font-figtree text-main text-shadow-xs text-shadow-main">
           Admin Dashboard
         </h1>
-        <h2 className="text-4xl font-bold font-figtree text-muted text-shadow-xs">Verify Pending Completions</h2>
+        <h2 className="text-4xl font-bold font-figtree text-neutral-400 text-shadow-xs">Verify Pending Completions</h2>
       </div>
       <div className='flex flex-col gap-8'>
         {pendingCompletions.length > 0 ? pendingCompletions.map((completion: PendingCompletion) => (

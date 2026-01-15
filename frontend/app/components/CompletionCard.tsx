@@ -10,7 +10,9 @@ const CompletionCard = async ({ completion, token }: { completion: PendingComple
         </div>
         <div className="flex items-center justify-start flex-1 gap-10">
           <div className="flex-center flex-col gap-2 z-1">
-            <span className="text-muted">User: {completion.user.username}</span>
+            <span className="text-neutral-400">
+              User: <span className='text-red'>{completion.user.username}</span>
+            </span>
             <a
               href={completion.proof_link}
               target="_blank"
@@ -37,9 +39,9 @@ const CompletionCard = async ({ completion, token }: { completion: PendingComple
             </a>
           </div>
           <div className="flex flex-col gap-2 z-1">
-            <h2 className="text-center font-mono font-bold text-muted">
+            <h2 className="text-center font-mono font-bold text-neutral-400">
               <span className="tracking-widest">#{completion.demon.ranking}</span> |{' '}
-              <span className="font-bold gradient-text font-figtree">{completion.demon.name}</span>
+              <span className="font-bold text-red font-figtree">{completion.demon.name}</span>
             </h2>
             <p className="text-sm tracking-widest text-main">
               {completion.demon.points} Points (100%)
