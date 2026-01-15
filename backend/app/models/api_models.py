@@ -35,7 +35,7 @@ class CompletionUser(BaseModel):
 class CompletionCreate(BaseModel):
     demon_id: int
     proof_link: str | None
-    
+
 
 class CompletionResponse(BaseModel):
     demon_id: int
@@ -88,6 +88,7 @@ class LeaderboardProfile(BaseModel):
     username: str
     total_points: float
     completions: list[int]
+    avatar_url: str | None
 
 
 class Token(BaseModel):

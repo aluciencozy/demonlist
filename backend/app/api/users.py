@@ -12,8 +12,11 @@ from app.services.auth_service import get_password_hash, verify_password
 
 s3_service = S3Service()
 router = APIRouter(
-    prefix="/users", responses={401: {"description": "Not authenticated"}}, tags=["users"]
+    prefix="/users",
+    responses={401: {"description": "Not authenticated"}},
+    tags=["users"],
 )
+
 
 @router.get("/me", response_model=UserResponse)
 async def read_me(current_user: Annotated[User, Depends(get_current_active_user)]):
@@ -37,6 +40,7 @@ def upload_avatar(
     extension = file.filename.split(".")[-1]
     file.filename = f"{current_user.id}_avatar.{extension}"
 
+    s3_service.delete_file(current_user.avatar_url or "")
     url = s3_service.upload_file(file, folder="avatars")
 
     if not url:
@@ -53,18 +57,29 @@ def upload_avatar(
 
 
 @router.patch("/me/password")
-def change_password(current_user: Annotated[User, Depends(get_current_active_user)], password_update: UserPasswordUpdate, db: SessionDep) -> dict:
+def change_password(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    password_update: UserPasswordUpdate,
+    db: SessionDep,
+) -> dict:
     if not current_user or not current_user.hashed_password:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
     if not verify_password(password_update.old_password, current_user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Old password is incorrect")
-    
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Old password is incorrect"
+        )
+
     if password_update.old_password == password_update.new_password:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="New password must be different from old password")
-    
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be different from old password",
+        )
+
     current_user.hashed_password = get_password_hash(password_update.new_password)
-    
+
     db.add(current_user)
     db.commit()
     db.refresh(current_user)

@@ -3,7 +3,11 @@ from sqlalchemy import desc, func, select
 
 from app.db.db import SessionDep
 from app.models.db_models import Demon, User, Completion, Status
-from app.models.api_models import CompletionResponse, LeaderboardEntry, LeaderboardProfile
+from app.models.api_models import (
+    CompletionResponse,
+    LeaderboardEntry,
+    LeaderboardProfile,
+)
 
 
 router = APIRouter(
@@ -25,7 +29,12 @@ def get_leaderboard(db: SessionDep) -> list[LeaderboardEntry]:
         .limit(100)
     )
     results = db.execute(stmt).all()
-    return [LeaderboardEntry(username=row.username, id=row.id, total_points=row.total_points or 0) for row in results]
+    return [
+        LeaderboardEntry(
+            username=row.username, id=row.id, total_points=row.total_points or 0
+        )
+        for row in results
+    ]
 
 
 @router.get("/{user_id}")
@@ -33,19 +42,23 @@ def get_leaderboard_profile(user_id: int, db: SessionDep) -> LeaderboardProfile:
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     total_points = (
         db.query(func.sum(Demon.points))
         .join(Completion, Completion.demon_id == Demon.id)
         .filter(Completion.user_id == user_id, Completion.status == Status.APPROVED)
         .scalar()
     ) or 0
-    
+
     return LeaderboardProfile(
         id=user.id,
         username=user.username,
         total_points=total_points,
+        avatar_url=user.avatar_url,
         completions=[
-            comp.demon_id for comp in db.query(Completion).filter(Completion.user_id == user_id, Completion.status == Status.APPROVED).all()
+            comp.demon_id
+            for comp in db.query(Completion)
+            .filter(Completion.user_id == user_id, Completion.status == Status.APPROVED)
+            .all()
         ],
     )

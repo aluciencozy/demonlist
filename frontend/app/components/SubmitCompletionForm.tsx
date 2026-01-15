@@ -177,9 +177,7 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
               )}
             />
 
-            <div className="hidden sm:block pt-6 text-sm font-bold text-muted-foreground">
-              - OR -
-            </div>
+            <div className="hidden sm:block pt-6 text-sm font-bold text-muted-foreground">OR</div>
 
             <Controller
               name="proof_file"

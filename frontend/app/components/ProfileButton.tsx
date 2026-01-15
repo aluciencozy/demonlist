@@ -1,33 +1,43 @@
 'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { User } from "@/types/types";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { User } from '@/types/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-  DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const ProfileButton = ({ user }: { user: User }) => {
   const [timestamp, setTimestamp] = useState<number | null>(null);
   const router = useRouter();
 
+  const storageKey = `avatar_timestamp_${user.id}`;
+
   useEffect(() => {
+    const savedTimestamp = localStorage.getItem(storageKey);
+    if (savedTimestamp) {
+      setTimestamp(Number(savedTimestamp));
+    }
+
     const handleAvatarUpdate = () => {
-      setTimestamp(Date.now());
+      const newTime = Date.now();
+      setTimestamp(newTime);
+      localStorage.setItem(storageKey, newTime.toString());
     };
-    
+
     window.addEventListener('avatar-updated', handleAvatarUpdate);
     return () => window.removeEventListener('avatar-updated', handleAvatarUpdate);
-  }, [router]);
+  }, [router, storageKey]);
 
   const handleLogout = async () => {
+    localStorage.removeItem(storageKey);
     await fetch('http://localhost:3000/api/logout', { method: 'POST' });
     router.push('/');
     router.refresh();
@@ -80,6 +90,6 @@ const ProfileButton = ({ user }: { user: User }) => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
 
-export default ProfileButton
+export default ProfileButton;
