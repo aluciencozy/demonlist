@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import LeaderboardProfileDetails from '@/app/components/LeaderboardProfileDetails';
+import LeaderboardProfileDetails from '@/components/LeaderboardProfileDetails';
 
 const LeaderboardProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (

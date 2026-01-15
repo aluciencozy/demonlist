@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import DemonDetails from '@/app/components/DemonDetails';
+import DemonDetails from '@/components/DemonDetails';
 
 const DemonPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (

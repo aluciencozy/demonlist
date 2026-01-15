@@ -1,23 +1,23 @@
-import type { Metadata } from "next";
-import { Poppins, Figtree } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Poppins, Figtree } from 'next/font/google';
+import './globals.css';
 import { Toaster } from 'sonner';
-import NavBar from "@/app/components/NavBar";
+import NavBar from '@/components/NavBar';
 
 const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
+  variable: '--font-poppins',
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '800'],
 });
 
 const figtree = Figtree({
-  variable: "--font-figtree",
-  subsets: ["latin"],
+  variable: '--font-figtree',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Demonlist Ultimate",
-  description: "The ultimate platform for demonlist tracking",
+  title: 'Demonlist Ultimate',
+  description: 'The ultimate platform for demonlist tracking',
 };
 
 export default function RootLayout({

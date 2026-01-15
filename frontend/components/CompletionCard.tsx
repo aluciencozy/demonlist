@@ -1,7 +1,13 @@
 import { PendingCompletion } from '@/types/types';
-import CompletionCardButtons from '@/app/components/CompletionCardButtons';
+import CompletionCardButtons from '@/components/CompletionCardButtons';
 
-const CompletionCard = async ({ completion, token }: { completion: PendingCompletion, token: string }) => {
+const CompletionCard = async ({
+  completion,
+  token,
+}: {
+  completion: PendingCompletion;
+  token: string;
+}) => {
   return (
     <div className="max-w-3xl w-3xl font-figtree">
       <div className="flex items-center justify-between gap-x-8 bg-background border-border border p-6 rounded-2xl hover:translate-x-4 transition-transform duration-300 after:content-[''] after:absolute after:opacity-0 after:inset-0 after:bg-surface hover:after:opacity-30 relative after:duration-200 after:transition-all group">
@@ -11,7 +17,7 @@ const CompletionCard = async ({ completion, token }: { completion: PendingComple
         <div className="flex items-center justify-start flex-1 gap-10">
           <div className="flex-center flex-col gap-2 z-1">
             <span className="text-neutral-400">
-              User: <span className='text-red'>{completion.user.username}</span>
+              User: <span className="text-red">{completion.user.username}</span>
             </span>
             <a
               href={completion.proof_link}

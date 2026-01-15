@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import SubmitCompletion from '@/app/components/SubmitCompletion';
+import SubmitCompletion from '@/components/SubmitCompletion';
 
 const SubmitCompletionPage = async () => {
   return (
@@ -9,4 +9,4 @@ const SubmitCompletionPage = async () => {
   );
 };
 
-export default SubmitCompletionPage
+export default SubmitCompletionPage;

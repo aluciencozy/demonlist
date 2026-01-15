@@ -1,5 +1,5 @@
 import { Demon } from '@/types/types';
-import DemonCard from '@/app/components/DemonCard';
+import DemonCard from '@/components/DemonCard';
 import { getDemonlist } from '@/lib/demonlist';
 import { getLeaderboardProfile } from '@/lib/leaderboard';
 import LeaderboardProfileDetailsAvatar from './LeaderboardProfileDetailsAvatar';

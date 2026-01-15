@@ -1,4 +1,4 @@
-import SettingsServer from '@/app/components/SettingsServer';
+import SettingsServer from '@/components/SettingsServer';
 import { Suspense } from 'react';
 
 const SettingsPage = () => {
@@ -9,6 +9,6 @@ const SettingsPage = () => {
       </Suspense>
     </div>
   );
-}
+};
 
-export default SettingsPage
+export default SettingsPage;

@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import DemonCard from '@/app/components/DemonCard';
+import DemonCard from '@/components/DemonCard';
 import { Demon, Profile } from '@/types/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -86,6 +86,6 @@ const DemonlistPage = async () => {
       </div>
     </main>
   );
-}
+};
 
-export default DemonlistPage
+export default DemonlistPage;

@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import CompletionCards from "@/app/components/CompletionCards"
+import { Suspense } from 'react';
+import CompletionCards from '@/components/CompletionCards';
 
 const AdminPage = () => {
   return (
@@ -9,6 +9,6 @@ const AdminPage = () => {
       </Suspense>
     </main>
   );
-}
+};
 
-export default AdminPage
+export default AdminPage;

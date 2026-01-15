@@ -1,14 +1,17 @@
 import { cacheTag, cacheLife } from 'next/cache';
 import { cookies } from 'next/headers';
-import SubmitCompletionForm from '@/app/components/SubmitCompletionForm';
-import SubmitCompletionUnauthorized from '@/app/components/SubmitCompletionUnauthorized';
+import SubmitCompletionForm from '@/components/SubmitCompletionForm';
+import SubmitCompletionUnauthorized from '@/components/SubmitCompletionUnauthorized';
 import { getCurrentUser } from '@/lib/auth';
 import { getDemonlist } from '@/lib/demonlist';
 
 const SubmitCompletion = async () => {
   const user = await getCurrentUser();
 
-  if (!user) return <SubmitCompletionUnauthorized message="You must be logged in to submit a completion :/" />;
+  if (!user)
+    return (
+      <SubmitCompletionUnauthorized message="You must be logged in to submit a completion :/" />
+    );
 
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token')?.value || '';
