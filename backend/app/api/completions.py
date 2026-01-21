@@ -27,7 +27,8 @@ s3_service = S3Service()
 def get_my_completions(
     db: SessionDep, current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    return db.query(Completion).filter(Completion.user_id == current_user.id).all()
+    stmt = select(Completion).where(Completion.user_id == current_user.id)
+    return db.scalars(stmt).all()
 
 
 @router.get("/pending", response_model=list[PendingCompletionResponse])

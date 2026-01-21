@@ -19,7 +19,7 @@ const LeaderboardPage = async () => {
           Top Players
         </h1>
 
-        {top3.length >= 3 ? (
+        {top3.length >= 3 ?
           <div className="flex flex-wrap justify-center items-end gap-10 md:gap-20 font-figtree text-xl font-semibold">
             <div className="flex-center flex-col order-1 md:order-0">
               <Link
@@ -96,7 +96,7 @@ const LeaderboardPage = async () => {
               </Link>
             </div>
           </div>
-        ) : null}
+        : null}
 
         <div className="w-full max-w-2xl mt-8">
           <Card className="bg-background/50 border-border/50 backdrop-blur-sm">

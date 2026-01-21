@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -173,12 +173,13 @@ points_top_150 = [
 ]
 
 for demon, point in zip(top_150_demons, points_top_150):
-    demon["points"] = point    
+    demon["points"] = point
 
 
 def create_top_150_demons(db: SessionDep):
     for demon_data in top_150_demons:
-        existing_demon = db.query(Demon).filter(Demon.level_id == demon_data["level_id"]).first()
+        stmt = select(Demon).where(Demon.level_id == demon_data["level_id"])
+        existing_demon = db.execute(stmt).scalar_one_or_none()
         if existing_demon:
             existing_demon.name = demon_data["name"]
             existing_demon.creator = demon_data["publisher"]["name"]
@@ -186,7 +187,7 @@ def create_top_150_demons(db: SessionDep):
             existing_demon.ranking = demon_data["position"]
             existing_demon.level_id = demon_data["level_id"]
             existing_demon.preview_link = demon_data["video"]
-            existing_demon.thumbnail = demon_data["thumbnail"] 
+            existing_demon.thumbnail = demon_data["thumbnail"]
             existing_demon.points = demon_data["points"]
         else:
             created_demon = Demon(
@@ -197,11 +198,11 @@ def create_top_150_demons(db: SessionDep):
                 level_id=demon_data["level_id"],
                 preview_link=demon_data["video"],
                 thumbnail=demon_data["thumbnail"],
-                points=demon_data["points"]
+                points=demon_data["points"],
             )
-            
+
             db.add(created_demon)
-            
+
     db.commit()
 
     return "Top 150 demons created successfully"

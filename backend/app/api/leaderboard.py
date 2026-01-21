@@ -4,7 +4,6 @@ from sqlalchemy import desc, func, select
 from app.db.db import SessionDep
 from app.models.db_models import Demon, User, Completion, Status
 from app.models.api_models import (
-    CompletionResponse,
     LeaderboardEntry,
     LeaderboardProfile,
 )
@@ -39,26 +38,31 @@ def get_leaderboard(db: SessionDep) -> list[LeaderboardEntry]:
 
 @router.get("/{user_id}")
 def get_leaderboard_profile(user_id: int, db: SessionDep) -> LeaderboardProfile:
-    user = db.query(User).filter(User.id == user_id).first()
+    stmt = select(User).where(User.id == user_id)
+    user = db.execute(stmt).scalar_one_or_none()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    total_points = (
-        db.query(func.sum(Demon.points))
+    stmt_points = (
+        select(func.sum(Demon.points))
         .join(Completion, Completion.demon_id == Demon.id)
-        .filter(Completion.user_id == user_id, Completion.status == Status.APPROVED)
-        .scalar()
-    ) or 0
+        .where(Completion.user_id == user_id)
+        .where(Completion.status == Status.APPROVED)
+    )
+    total_points = db.execute(stmt_points).scalar() or 0
+
+    stmt_completions = (
+        select(Completion.demon_id)
+        .where(Completion.user_id == user_id)
+        .where(Completion.status == Status.APPROVED)
+    )
+    completion_ids = list(db.execute(stmt_completions).scalars().all())
 
     return LeaderboardProfile(
         id=user.id,
         username=user.username,
         total_points=total_points,
         avatar_url=user.avatar_url,
-        completions=[
-            comp.demon_id
-            for comp in db.query(Completion)
-            .filter(Completion.user_id == user_id, Completion.status == Status.APPROVED)
-            .all()
-        ],
+        completions=completion_ids,
     )

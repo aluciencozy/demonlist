@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import selectinload
 from sqlalchemy import select
 
 from app.db.db import SessionDep
@@ -14,10 +14,10 @@ router = APIRouter(
 )
 
 
-# ! Implement rate limiting later
 @router.get("/", response_model=list[DemonlistResponse])
 def get_demonlist(db: SessionDep):
-    return db.query(Demon).all()
+    stmt = select(Demon)
+    return db.execute(stmt).scalars().all()
 
 
 @router.get("/{demon_id}", response_model=DemonDetailResponse)

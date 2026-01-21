@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from pwdlib import PasswordHash
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.models.db_models import User
@@ -14,11 +15,13 @@ password_hash = PasswordHash.recommended()
 
 
 def get_user_by_id(db: SessionDep, user_id: int) -> User | None:
-    return db.query(User).filter(User.id == user_id).first()
+    stmt = select(User).where(User.id == user_id)
+    return db.execute(stmt).scalar_one_or_none()
 
 
 def get_user_by_email(db: SessionDep, email: str) -> User | None:
-    return db.query(User).filter(User.email == email).first()
+    stmt = select(User).where(User.email == email)
+    return db.execute(stmt).scalar_one_or_none()
 
 
 def authenticate_user(db: SessionDep, email: str, password: str) -> User | None:

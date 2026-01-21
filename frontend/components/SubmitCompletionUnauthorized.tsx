@@ -5,7 +5,7 @@ const SubmitCompletionUnauthorized = ({ message }: { message: string }) => {
         Submit Completion
       </h1>
       <div className="mt-10 w-full max-w-3xl">
-        <p className="text-center text-red-500 text-lg">{message}</p>
+        <p className="text-center text-red text-lg">{message}</p>
       </div>
     </main>
   );

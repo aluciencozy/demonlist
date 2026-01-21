@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { getDemonlist } from '@/lib/demonlist';
 import { getLeaderboard } from '@/lib/leaderboard';
 import Demonlist from '@/components/Demonlist';
+import AiChatCard from '@/components/AiChatCard';
 
 const DemonlistPage = async () => {
   const demonlist = await getDemonlist();
@@ -30,6 +31,8 @@ const DemonlistPage = async () => {
         <Demonlist demonlist={demonlist} />
 
         <aside className="w-full h-full max-w-sm flex flex-col gap-15">
+          <AiChatCard />
+
           <Card className="bg-background">
             <CardHeader>
               <CardTitle className="text-center text-3xl">Current Top Players</CardTitle>
