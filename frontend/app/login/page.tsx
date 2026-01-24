@@ -63,7 +63,7 @@ const Login = () => {
   }
 
   return (
-    <main className="h-screen flex-center flex-col bg-background font-figtree">
+    <main className="h-screen flex-center flex-col bg-background font-figtree px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -136,7 +136,3 @@ const Login = () => {
 }
 
 export default Login
-
-// const router = useRouter();
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')

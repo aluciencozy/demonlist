@@ -65,7 +65,7 @@ const Register = () => {
   }
 
   return (
-    <main className="h-screen flex-center flex-col bg-background font-figtree">
+    <main className="h-screen flex-center flex-col bg-background font-figtree px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>

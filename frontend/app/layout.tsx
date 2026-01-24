@@ -3,6 +3,7 @@ import { Poppins, Figtree } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'sonner';
 import NavBar from '@/components/NavBar';
+import { Suspense } from 'react';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -28,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${poppins.variable} ${figtree.variable} antialiased`}>
-        <NavBar />
-        <div className="w-full font-figtree">{children}</div>
+        <Suspense fallback={<p>Loading...</p>}>
+          <NavBar />
+        </Suspense>
+        <div className="w-full font-figtree p-4">{children}</div>
         <Toaster position="top-center" richColors={true} />
       </body>
     </html>

@@ -1,10 +1,12 @@
 import ProfileButton from './ProfileButton';
 import AccountButtons from './AccountButtons';
-import { getCurrentUser } from '@/lib/auth';
+import { User } from '@/types/types';
 
-export default async function NavUser() {
-  const user = await getCurrentUser();
-  
+interface NavUserProps {
+  user: User | null;
+}
+
+export default function NavUser({ user }: NavUserProps) {
   if (!user) return <AccountButtons />;
 
   return <ProfileButton user={user} />;

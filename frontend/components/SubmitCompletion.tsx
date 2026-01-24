@@ -19,11 +19,11 @@ const SubmitCompletion = async () => {
   const demonlist = await getDemonlist();
 
   return (
-    <main className="max-w-7xl mx-auto mt-30 relative mb-20 flex-center flex-col font-figtree">
-      <h1 className="font-bold text-7xl font-figtree text-main text-shadow-xs text-shadow-main">
+    <main className="max-w-7xl mx-auto mt-20 lg:mt-30 relative mb-20 flex-center flex-col font-figtree px-4">
+      <h1 className="font-bold text-4xl sm:text-6xl lg:text-7xl font-figtree text-main text-shadow-xs text-shadow-main text-center">
         Submit Completion
       </h1>
-      <div className="mt-10 w-full max-w-3xl">
+      <div className="mt-6 lg:mt-10 w-full max-w-3xl">
         <SubmitCompletionForm demonlist={demonlist} token={token} />
       </div>
     </main>

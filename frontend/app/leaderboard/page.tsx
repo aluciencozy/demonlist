@@ -13,14 +13,14 @@ const LeaderboardPage = async () => {
   const rest = leaderboard.slice(3);
 
   return (
-    <main className="max-w-7xl mx-auto mt-30 relative mb-20 px-4">
-      <div className="mb-15 gap-15 flex-center flex-col text-main">
-        <h1 className="font-bold text-7xl font-figtree text-main text-shadow-xs text-shadow-main text-center mb-10">
+    <main className="max-w-7xl mx-auto mt-20 lg:mt-30 relative mb-20">
+      <div className="mb-10 lg:mb-15 gap-10 lg:gap-15 flex-center flex-col text-main">
+        <h1 className="font-bold text-4xl sm:text-6xl lg:text-7xl font-figtree text-main text-shadow-xs text-shadow-main text-center mb-6 lg:mb-10">
           Top Players
         </h1>
 
         {top3.length >= 3 ?
-          <div className="flex flex-wrap justify-center items-end gap-10 md:gap-20 font-figtree text-xl font-semibold">
+          <div className="flex flex-wrap justify-center items-end gap-5 sm:gap-20 font-figtree text-base sm:text-xl font-semibold">
             <div className="flex-center flex-col order-1 md:order-0">
               <Link
                 href={`/leaderboard/${top3[1]?.id}`}
@@ -33,7 +33,7 @@ const LeaderboardPage = async () => {
                     alt="Silver Trophy"
                     width={65}
                     height={65}
-                    className="relative z-10 drop-shadow-lg"
+                    className="relative z-10 drop-shadow-lg w-[55px] sm:w-[65px]"
                   />
                 </div>
                 <div className="mt-5 flex-center flex-col">
@@ -42,7 +42,7 @@ const LeaderboardPage = async () => {
                   </h4>
                   <p className="text-muted text-sm font-mono mt-1">{top3[1]?.total_points} pts</p>
                 </div>
-                <h5 className="mt-6 text-3xl font-bold text-gray-400">#2</h5>
+                <h5 className="mt-6 sm:text-3xl text-xl font-bold text-gray-400">#2</h5>
               </Link>
             </div>
 
@@ -58,7 +58,7 @@ const LeaderboardPage = async () => {
                     alt="Gold Trophy"
                     width={90}
                     height={90}
-                    className="relative z-10 drop-shadow-2xl scale-110"
+                    className="relative z-10 drop-shadow-2xl scale-110 w-[75px] sm:w-[90px]"
                   />
                 </div>
                 <div className="mt-6 flex-center flex-col">
@@ -67,7 +67,7 @@ const LeaderboardPage = async () => {
                   </h4>
                   <p className="text-muted text-base font-mono mt-1">{top3[0]?.total_points} pts</p>
                 </div>
-                <h5 className="mt-6 text-5xl font-bold text-yellow-500">#1</h5>
+                <h5 className="mt-6 sm:text-5xl text-3xl font-bold text-yellow-500">#1</h5>
               </Link>
             </div>
 
@@ -83,7 +83,7 @@ const LeaderboardPage = async () => {
                     alt="Bronze Trophy"
                     width={65}
                     height={65}
-                    className="relative z-10 drop-shadow-lg"
+                    className="relative z-10 drop-shadow-lg w-[55px] sm:w-[65px]"
                   />
                 </div>
                 <div className="mt-5 flex-center flex-col">
@@ -92,7 +92,7 @@ const LeaderboardPage = async () => {
                   </h4>
                   <p className="text-muted text-sm font-mono mt-1">{top3[2]?.total_points} pts</p>
                 </div>
-                <h5 className="mt-6 text-3xl font-bold text-orange-600">#3</h5>
+                <h5 className="mt-6 sm:text-3xl text-xl font-bold text-orange-600">#3</h5>
               </Link>
             </div>
           </div>
