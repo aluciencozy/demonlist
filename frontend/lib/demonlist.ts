@@ -1,12 +1,13 @@
 import { cacheTag, cacheLife } from 'next/cache';
 import { Demon } from '@/types/types';
+import { API_BASE_URL } from '@/lib/config';
 
 export const getDemonlist = async (): Promise<Demon[]> => {
   'use cache';
   cacheTag('demonlist');
   cacheLife('days');
 
-  const res = await fetch('http://127.0.0.1:8000/api/v1/demonlist/');
+  const res = await fetch(`${API_BASE_URL}/api/v1/demonlist/`);
 
   if (!res.ok) {
     const errorData = await res.json();
@@ -26,7 +27,7 @@ export const getDemon = async (id: string) => {
   cacheTag(`demon-${id}`);
   cacheLife('days');
 
-  const res = await fetch(`http://127.0.0.1:8000/api/v1/demonlist/${id}`);
+  const res = await fetch(`${API_BASE_URL}/api/v1/demonlist/${id}`);
 
   if (!res.ok) {
     const errorData = await res.json();

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { CameraIcon, Loader2, User, Mail, ShieldAlert } from 'lucide-react';
 import { revalidateLeaderboardProfile } from '@/lib/actions';
+import { API_BASE_URL } from '@/lib/config';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,7 +44,7 @@ const SettingsClient = ({ user, token, timestamp }: SettingsClientProps) => {
   const [newPassword, setNewPassword] = useState<string>('');
   const [oldPassword, setOldPassword] = useState<string>('');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    user.avatar_url ? `${user.avatar_url}?t=${timestamp}` : null
+    user.avatar_url ? `${user.avatar_url}?t=${timestamp}` : null,
   );
 
   const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +56,7 @@ const SettingsClient = ({ user, token, timestamp }: SettingsClientProps) => {
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/users/me/avatar', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/me/avatar`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -92,7 +93,7 @@ const SettingsClient = ({ user, token, timestamp }: SettingsClientProps) => {
     }
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/users/me/password', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/me/password`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

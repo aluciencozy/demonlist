@@ -1,12 +1,13 @@
 import { cacheTag, cacheLife } from 'next/cache';
 import { Profile } from '@/types/types';
+import { API_BASE_URL } from '@/lib/config';
 
 export const getLeaderboard = async (): Promise<Profile[]> => {
   'use cache';
   cacheTag('leaderboard');
   cacheLife('hours');
 
-  const res = await fetch('http://127.0.0.1:8000/api/v1/leaderboard/');
+  const res = await fetch(`${API_BASE_URL}/api/v1/leaderboard/`);
 
   if (!res.ok) {
     const errorData = await res.json();
@@ -26,7 +27,7 @@ export const getLeaderboardProfile = async (id: string) => {
   cacheTag(`leaderboard-profile-${id}`);
   cacheLife('hours');
 
-  const res = await fetch(`http://127.0.0.1:8000/api/v1/leaderboard/${id}`);
+  const res = await fetch(`${API_BASE_URL}/api/v1/leaderboard/${id}`);
 
   if (!res.ok) {
     const errorData = await res.json();

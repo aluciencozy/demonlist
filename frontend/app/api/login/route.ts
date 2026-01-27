@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
+import { API_BASE_URL } from '@/lib/config';
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
   formData.append('username', email);
   formData.append('password', password);
 
-  const res = await fetch('http://127.0.0.1:8000/api/v1/auth/token', {
+  const res = await fetch(`${API_BASE_URL}/api/v1/auth/token`, {
     method: 'POST',
     body: formData.toString(),
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ detail: errorMessage }, { status: 401 });
   }
-  
+
   const data = await res.json();
 
   const cookieStore = await cookies();

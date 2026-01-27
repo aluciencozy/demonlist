@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { User } from '@/types/types';
+import { API_BASE_URL } from '@/lib/config';
 
 export const getCurrentUser = cache(async (): Promise<User | null> => {
   const cookieStore = await cookies();
@@ -9,7 +10,7 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
   if (!token) return null;
 
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/v1/users/me', {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       headers: {
         Authorization: `Bearer ${token.value}`,
       },

@@ -4,14 +4,21 @@ import { PendingCompletion } from '@/types/types';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/lib/config';
 
-const CompletionCardButtons = ({ completion, token }: { completion: PendingCompletion, token: string }) => {
+const CompletionCardButtons = ({
+  completion,
+  token,
+}: {
+  completion: PendingCompletion;
+  token: string;
+}) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const handleClick = async (status: 'approved' | 'rejected') => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/completions/${completion.id}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/completions/${completion.id}/status`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -32,7 +39,7 @@ const CompletionCardButtons = ({ completion, token }: { completion: PendingCompl
 
       startTransition(() => {
         router.refresh();
-      })
+      });
 
       const data = await res.json();
       console.log(data);
@@ -42,7 +49,7 @@ const CompletionCardButtons = ({ completion, token }: { completion: PendingCompl
       toast.error(e instanceof Error ? e.message : 'Failed to update completion status');
     }
   };
-  
+
   return (
     <div className="z-1 flex-center gap-6">
       <button

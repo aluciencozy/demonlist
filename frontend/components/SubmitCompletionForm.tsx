@@ -1,6 +1,7 @@
 'use client';
 
 import { Demon } from '@/types/types';
+import { API_BASE_URL } from '@/lib/config';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
@@ -43,7 +44,7 @@ const formSchema = z
     {
       message: 'Please provide either a video URL or upload a file.',
       path: ['proof_link'],
-    }
+    },
   );
 
 type FormFields = z.infer<typeof formSchema>;
@@ -69,7 +70,7 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
   const onSubmit = async (data: FormFields) => {
     try {
       if (data.proof_link) {
-        const res = await fetch('http://127.0.0.1:8000/api/v1/completions/', {
+        const res = await fetch(`${API_BASE_URL}/api/v1/completions/`, {
           method: 'POST',
           body: JSON.stringify({
             demon_id: data.demon_id,
@@ -94,12 +95,12 @@ const SubmitCompletionForm = ({ demonlist, token }: { demonlist: Demon[]; token:
         formData.append('file', data.proof_file[0]);
 
         const res = await fetch(
-          `http://127.0.0.1:8000/api/v1/completions/upload?demon_id=${data.demon_id}`,
+          `${API_BASE_URL}/api/v1/completions/upload?demon_id=${data.demon_id}`,
           {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
-          }
+          },
         );
 
         if (!res.ok) {

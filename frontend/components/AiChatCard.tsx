@@ -7,6 +7,7 @@ import { Send, Sparkles, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { API_BASE_URL } from '@/lib/config';
 
 const AiChatCard = () => {
   const [query, setQuery] = useState('');
@@ -22,7 +23,7 @@ const AiChatCard = () => {
     setModelUsed('');
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/chat/ask', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/chat/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
