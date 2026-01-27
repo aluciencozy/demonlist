@@ -40,13 +40,6 @@ This project utilizes a decoupled client-server architecture deployed on AWS.
 
 The application follows a standard **3-Tier Cloud Architecture**:
 
-```mermaid
-graph LR
-    User[User Browser] -- HTTPS --> Amplify[AWS Amplify (Next.js)]
-    Amplify -- HTTP JSON --> EC2[AWS EC2 (FastAPI + Docker)]
-    EC2 -- TCP 5432 --> RDS[(AWS RDS PostgreSQL)]
-```
-
 ### Architecture Breakdown
 
 - **Presentation Tier:**  
