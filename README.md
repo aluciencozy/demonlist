@@ -1,0 +1,47 @@
+# 👹 Demon List - Full Stack Cloud Application
+
+A robust, full-stack web application that tracks, ranks, and analyzes "Demon" level difficulties. Built with a modern Next.js frontend and a high-performance FastAPI backend, fully containerized and deployed on a 3-tier AWS cloud architecture.
+
+**🔗 Live Demo:** [View Deployed App](https://main.d791upycqb9vt.amplifyapp.com/demonlist)
+
+> **⚠️ Important Note for Visitors:**
+> The backend for this project is hosted on AWS EC2 via HTTP, while the frontend is on HTTPS.
+> **If data does not load immediately:** Please click the "Lock/Shield" icon in your browser URL bar, select "Site Settings," and change "Insecure Content" to **Allow**.
+
+---
+
+## 🛠️ Tech Stack
+
+This project utilizes a decoupled client-server architecture deployed on AWS.
+
+### **Frontend (Client)**
+* **Framework:** Next.js (React)
+* **Styling:** Tailwind CSS
+* **Hosting:** AWS Amplify (CI/CD connected to GitHub)
+
+### **Backend (API)**
+* **Framework:** FastAPI (Python)
+* **ORM:** SQLAlchemy
+* **Runtime:** Docker & Docker Compose
+* **Hosting:** AWS EC2 (Ubuntu Linux)
+
+### **Database (Storage)**
+* **Database:** PostgreSQL 16
+* **Hosting:** AWS RDS (Relational Database Service)
+
+### **AI & DevOps**
+* **AI Integration:** Gemini API & Groq API (Chatbot functionality)
+* **Containerization:** Docker
+* **Version Control:** Git & GitHub
+
+---
+
+## ☁️ Cloud Architecture
+
+The application follows a standard **3-Tier Cloud Architecture**:
+
+```mermaid
+graph LR
+    User[User Browser] -- HTTPS --> Amplify[AWS Amplify (Next.js)]
+    Amplify -- HTTP JSON --> EC2[AWS EC2 (FastAPI + Docker)]
+    EC2 -- TCP 5432 --> RDS[(AWS RDS PostgreSQL)]
