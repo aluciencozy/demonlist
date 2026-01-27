@@ -40,7 +40,9 @@ def upload_avatar(
     extension = file.filename.split(".")[-1]
     file.filename = f"{current_user.id}_avatar.{extension}"
 
-    s3_service.delete_file(current_user.avatar_url or "")
+    if current_user.avatar_url:
+        s3_service.delete_file(current_user.avatar_url or "")
+
     url = s3_service.upload_file(file, folder="avatars")
 
     if not url:

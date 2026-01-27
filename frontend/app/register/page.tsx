@@ -10,6 +10,7 @@ import { FieldDescription, FieldGroup, FieldLabel, Field, FieldError, FieldConte
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import MotionWrapper from "@/components/MotionWrapper";
 
 const formSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters long").max(20, "Username must be at most 20 characters long"),
@@ -66,102 +67,104 @@ const Register = () => {
 
   return (
     <main className="h-screen flex-center flex-col bg-background font-figtree px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Register</CardTitle>
-          <CardDescription>
-            Enter your username and email below to register a new account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} id="register-form">
-            <FieldGroup>
-              <Controller
-                name="username"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor="register-username">Username</FieldLabel>
-                      <FieldDescription>
-                        This is your public display name. Must be between 3 and 20 characters.
-                      </FieldDescription>
-                    </FieldContent>
-                    <Input
-                      {...field}
-                      id="register-username"
-                      type="text"
-                      placeholder="Your username"
-                      autoComplete="username"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor="register-email">Email</FieldLabel>
-                    </FieldContent>
-                    <Input
-                      {...field}
-                      id="register-email"
-                      type="email"
-                      placeholder="hello@world.com"
-                      autoComplete="email"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor="register-password">Password</FieldLabel>
-                      <FieldDescription>Must be at least 8 characters long.</FieldDescription>
-                    </FieldContent>
-                    <Input
-                      {...field}
-                      id="register-password"
-                      type="password"
-                      placeholder="Your password"
-                      autoComplete="new-password"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col mt-1">
-          <Field orientation="responsive">
-            <Button type="submit" form="register-form" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Registering...' : 'Register'}
-            </Button>
-            <div className="text-center">
-              {form.formState.errors.root && <FieldError errors={[form.formState.errors.root]} />}
+      <MotionWrapper>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-2xl">Register</CardTitle>
+            <CardDescription>
+              Enter your username and email below to register a new account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(onSubmit)} id="register-form">
+              <FieldGroup>
+                <Controller
+                  name="username"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldContent>
+                        <FieldLabel htmlFor="register-username">Username</FieldLabel>
+                        <FieldDescription>
+                          This is your public display name. Must be between 3 and 20 characters.
+                        </FieldDescription>
+                      </FieldContent>
+                      <Input
+                        {...field}
+                        id="register-username"
+                        type="text"
+                        placeholder="Your username"
+                        autoComplete="username"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
+                />
+              
+                <Controller
+                  name="email"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldContent>
+                        <FieldLabel htmlFor="register-email">Email</FieldLabel>
+                      </FieldContent>
+                      <Input
+                        {...field}
+                        id="register-email"
+                        type="email"
+                        placeholder="hello@world.com"
+                        autoComplete="email"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
+                />
+              
+                <Controller
+                  name="password"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldContent>
+                        <FieldLabel htmlFor="register-password">Password</FieldLabel>
+                        <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+                      </FieldContent>
+                      <Input
+                        {...field}
+                        id="register-password"
+                        type="password"
+                        placeholder="Your password"
+                        autoComplete="new-password"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
+                />
+              </FieldGroup>
+            </form>
+          </CardContent>
+          <CardFooter className="flex-col mt-1">
+            <Field orientation="responsive">
+              <Button type="submit" form="register-form" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Registering...' : 'Register'}
+              </Button>
+              <div className="text-center">
+                {form.formState.errors.root && <FieldError errors={[form.formState.errors.root]} />}
+              </div>
+            </Field>
+            <div className="text-center mt-2">
+              <span>Already have an account?</span>
+              <Button variant="link" asChild className="text-base text-red">
+                <Link href="/login">Login</Link>
+              </Button>
             </div>
-          </Field>
-          <div className="text-center mt-2">
-            <span>Already have an account?</span>
-            <Button variant="link" asChild className="text-base text-red">
-              <Link href="/login">Login</Link>
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+          </CardFooter>
+        </Card>
+      </MotionWrapper>
     </main>
   );
 };

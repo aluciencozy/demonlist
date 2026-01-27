@@ -5,6 +5,7 @@ import { getLeaderboard } from '@/lib/leaderboard';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
+import MotionWrapper from '@/components/MotionWrapper';
 
 const LeaderboardPage = async () => {
   const leaderboard: Profile[] = await getLeaderboard();
@@ -15,9 +16,11 @@ const LeaderboardPage = async () => {
   return (
     <main className="max-w-7xl mx-auto mt-20 lg:mt-30 relative mb-20">
       <div className="mb-10 lg:mb-15 gap-10 lg:gap-15 flex-center flex-col text-main">
-        <h1 className="font-bold text-4xl sm:text-6xl lg:text-7xl font-figtree text-main text-shadow-xs text-shadow-main text-center mb-6 lg:mb-10">
-          Top Players
-        </h1>
+        <MotionWrapper>
+          <h1 className="font-bold text-4xl sm:text-6xl lg:text-7xl font-figtree text-main text-shadow-xs text-shadow-main text-center mb-6 lg:mb-10">
+            Top Players
+          </h1>
+        </MotionWrapper>
 
         {top3.length >= 3 ?
           <div className="flex flex-wrap justify-center items-end gap-5 sm:gap-20 font-figtree text-base sm:text-xl font-semibold">
@@ -106,25 +109,27 @@ const LeaderboardPage = async () => {
                   const rank = top3.length < 3 ? index + 1 : index + 4;
 
                   return (
-                    <Link key={entry.id} href={`/leaderboard/${entry.id}`} className="group">
-                      <div className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200">
-                        <div className="flex items-center gap-6">
-                          <span className="font-figtree font-bold text-xl w-8 text-center text-muted-foreground group-hover:text-white transition-colors">
-                            {rank}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <span className="font-figtree font-medium text-lg text-primary group-hover:translate-x-1 transition-transform">
-                              {entry.username}
+                    <MotionWrapper key={entry.id} delay={index * 0.025}>
+                      <Link href={`/leaderboard/${entry.id}`} className="group">
+                        <div className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200">
+                          <div className="flex items-center gap-6">
+                            <span className="font-figtree font-bold text-xl w-8 text-center text-muted-foreground group-hover:text-white transition-colors">
+                              {rank}
                             </span>
+                            <div className="flex items-center gap-3">
+                              <span className="font-figtree font-medium text-lg text-primary group-hover:translate-x-1 transition-transform">
+                                {entry.username}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="font-mono text-primary font-bold">
+                            {entry.total_points}{' '}
+                            <span className="text-muted text-xs font-sans font-normal ml-1">PTS</span>
                           </div>
                         </div>
-
-                        <div className="font-mono text-primary font-bold">
-                          {entry.total_points}{' '}
-                          <span className="text-muted text-xs font-sans font-normal ml-1">PTS</span>
-                        </div>
-                      </div>
-                    </Link>
+                      </Link>
+                    </MotionWrapper>
                   );
                 })}
 

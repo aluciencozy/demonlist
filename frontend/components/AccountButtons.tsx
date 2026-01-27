@@ -1,7 +1,7 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
-const AccountButtons = async () => {
+const AccountButtons = () => {
   return (
     <div className="flex-center gap-5 text-primary">
       <Button asChild variant="outline" className="">
@@ -12,6 +12,6 @@ const AccountButtons = async () => {
       </Button>
     </div>
   );
-}
+};
 
-export default AccountButtons
+export default AccountButtons;
