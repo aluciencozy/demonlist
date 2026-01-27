@@ -1,10 +1,11 @@
 import { Suspense } from 'react';
 import LeaderboardProfileDetails from '@/components/LeaderboardProfileDetails';
+import ProfileSkeleton from '@/components/ProfileSkeleton';
 
 const LeaderboardProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <div className="max-w-7xl mx-auto mt-30 mb-20">
-      <Suspense fallback={<p>Loading user stats...</p>}>
+      <Suspense fallback={<ProfileSkeleton />}>
         <LeaderboardProfileDetails params={params} />
       </Suspense>
     </div>

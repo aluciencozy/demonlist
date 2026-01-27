@@ -6,6 +6,8 @@ import { getLeaderboard } from '@/lib/leaderboard';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import MotionWrapper from '@/components/MotionWrapper';
+import LeaderboardSkeleton from '@/components/LeaderboardSkeleton';
+import { Suspense } from 'react';
 
 const LeaderboardPage = async () => {
   const leaderboard: Profile[] = await getLeaderboard();
@@ -102,43 +104,45 @@ const LeaderboardPage = async () => {
         : null}
 
         <div className="w-full max-w-2xl mt-8">
-          <Card className="bg-background/50 border-border/50 backdrop-blur-sm">
-            <ScrollArea className="h-125 w-full rounded-md p-4">
-              <div className="flex flex-col gap-2">
-                {(top3.length < 3 ? leaderboard : rest).map((entry, index) => {
-                  const rank = top3.length < 3 ? index + 1 : index + 4;
+          <Suspense fallback={<LeaderboardSkeleton />}>
+            <Card className="bg-background/50 border-border/50 backdrop-blur-sm">
+              <ScrollArea className="h-125 w-full rounded-md p-4">
+                <div className="flex flex-col gap-2">
+                  {(top3.length < 3 ? leaderboard : rest).map((entry, index) => {
+                    const rank = top3.length < 3 ? index + 1 : index + 4;
 
-                  return (
-                    <MotionWrapper key={entry.id} delay={index * 0.025}>
-                      <Link href={`/leaderboard/${entry.id}`} className="group">
-                        <div className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200">
-                          <div className="flex items-center gap-6">
-                            <span className="font-figtree font-bold text-xl w-8 text-center text-muted-foreground group-hover:text-white transition-colors">
-                              {rank}
-                            </span>
-                            <div className="flex items-center gap-3">
-                              <span className="font-figtree font-medium text-lg text-primary group-hover:translate-x-1 transition-transform">
-                                {entry.username}
+                    return (
+                      <MotionWrapper key={entry.id} delay={index * 0.025}>
+                        <Link href={`/leaderboard/${entry.id}`} className="group">
+                          <div className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-200">
+                            <div className="flex items-center gap-6">
+                              <span className="font-figtree font-bold text-xl w-8 text-center text-muted-foreground group-hover:text-white transition-colors">
+                                {rank}
                               </span>
+                              <div className="flex items-center gap-3">
+                                <span className="font-figtree font-medium text-lg text-primary group-hover:translate-x-1 transition-transform">
+                                  {entry.username}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="font-mono text-primary font-bold">
+                              {entry.total_points}{' '}
+                              <span className="text-muted text-xs font-sans font-normal ml-1">PTS</span>
                             </div>
                           </div>
+                        </Link>
+                      </MotionWrapper>
+                    );
+                  })}
 
-                          <div className="font-mono text-primary font-bold">
-                            {entry.total_points}{' '}
-                            <span className="text-muted text-xs font-sans font-normal ml-1">PTS</span>
-                          </div>
-                        </div>
-                      </Link>
-                    </MotionWrapper>
-                  );
-                })}
-
-                {leaderboard.length === 0 && (
-                  <div className="text-center py-10 text-muted">No players found.</div>
-                )}
-              </div>
-            </ScrollArea>
-          </Card>
+                  {leaderboard.length === 0 && (
+                    <div className="text-center py-10 text-muted">No players found.</div>
+                  )}
+                </div>
+              </ScrollArea>
+            </Card>
+          </Suspense>
         </div>
       </div>
     </main>
