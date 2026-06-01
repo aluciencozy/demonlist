@@ -2,11 +2,7 @@
 
 A robust, full-stack web application that tracks, ranks, and analyzes "Demon" level difficulties. Built with a modern Next.js frontend and a high-performance FastAPI backend, fully containerized and deployed on a 3-tier AWS cloud architecture.
 
-**🔗 Live Demo:** [View Deployed App](https://main.d791upycqb9vt.amplifyapp.com/demonlist)
-
-> **⚠️ Important Note for Visitors:**
-> The backend for this project is hosted on AWS EC2 via HTTP, while the frontend is on HTTPS.
-> **If data does not load immediately:** Please click the "Lock/Shield" icon in your browser URL bar, select "Site Settings," and change "Insecure Content" to **Allow**.
+**🌐 Project Status:** Archive / Read-Only (Cloud infrastructure spun down to prevent AWS costs)
 
 ---
 
